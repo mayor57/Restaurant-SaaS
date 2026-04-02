@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -14,7 +14,7 @@ const NAV_ITEMS = [
   { name: "Staff", href: "/staff", icon: Users },
   { name: "Kitchen Queue", href: "/kitchen", icon: ChefHat },
   { name: "Reports", href: "/reports", icon: LineChart },
-  { name: "Customer Reviews", href: "/reviews", icon: MessageSquareQuote },
+
 ];
 
 export default function Sidebar({ className }: { className?: string }) {

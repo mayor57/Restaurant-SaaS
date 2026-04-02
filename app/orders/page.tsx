@@ -2,18 +2,9 @@
 
 import Topbar from "@/components/Topbar";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Filter, MoreHorizontal, Clock, CheckCircle2, XCircle, ChefHat, Plus, CheckCircle, X, ShoppingBag, User, Edit, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
-import { useState, useMemo } from "react";
-
-const initialOrders = [
-  { id: "ORD-2084", table: "T-04", status: "preparing", total: "$142.50", items: 4, time: "10 min ago", server: "Sarah M.", details: "2x Wagyu Ribeye, 1x Truffle Risotto, 1x Burrata" },
-  { id: "ORD-2085", table: "T-12", status: "ready", total: "$89.00", items: 2, time: "5 min ago", server: "Mike T.", details: "1x Salmon Tartare, 1x Artisan Negroni" },
-  { id: "ORD-2086", table: "T-01", status: "served", total: "$215.00", items: 6, time: "25 min ago", server: "Sarah M.", details: "3x Sea Bass, 2x Chardonnay, 1x Chocolate Tart" },
-  { id: "ORD-2087", table: "Takeaway", status: "pending", total: "$45.00", items: 1, time: "2 min ago", server: "Online", details: "1x Zentro Burger Deluxe" },
-  { id: "ORD-2088", table: "T-08", status: "preparing", total: "$175.25", items: 5, time: "15 min ago", server: "Alex K.", details: "2x Duck Confit, 3x Draft Beer" },
-  { id: "ORD-2089", table: "T-05", status: "cancelled", total: "$65.00", items: 2, time: "1 hr ago", server: "Mike T.", details: "1x Caesar Salad, 1x Iced Tea (Returned)" },
-  { id: "ORD-2090", table: "T-03", status: "served", total: "$310.00", items: 8, time: "2 hrs ago", server: "Sarah M.", details: "4x Chef Special Platter, 4x Wine Pairing" },
-];
+import { Search, Filter, MoreHorizontal, Clock, CheckCircle2, XCircle, ChefHat, Plus, CheckCircle, X, Trash2, Edit, ChevronLeft, ChevronRight, RefreshCw, Minus, ShoppingCart } from "lucide-react";
+import { useState, useMemo, useEffect } from "react";
+import { getOrders, updateOrderStatus, deleteOrder, createOrder, getMenuItems } from "@/lib/data";
 
 const statusConfig = {
   pending: { icon: Clock, color: "text-blue-400", bg: "bg-blue-400/10", border: "border-blue-400/20" },
@@ -24,22 +15,41 @@ const statusConfig = {
 };
 
 export default function OrdersPage() {
-  const [orders, setOrders] = useState(initialOrders);
+  const [orders, setOrders] = useState<any[]>([]);
+  const [menuItems, setMenuItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showSuccess, setShowSuccess] = useState<string | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<any>(null);
   const [activeActionMenu, setActiveActionMenu] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState("all");
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState("");
+  
+  // Basket State for New Order
+  const [basket, setBasket] = useState<any[]>([]);
+  const [basketTotal, setBasketTotal] = useState(0);
+
+  const loadOrders = async () => {
+    setLoading(true);
+    try {
+      const [orderData, menuData] = await Promise.all([getOrders(), getMenuItems()]);
+      setOrders(orderData);
+      setMenuItems(menuData);
+    } catch (err) {
+      console.error("Orders Load Error:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => { loadOrders(); }, []);
 
   const filteredOrders = useMemo(() => {
     return orders.filter(o => {
       const matchesStatus = filterStatus === "all" || o.status === filterStatus;
-      const matchesSearch = o.id.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                           o.table.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesSearch = (o.order_number || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+                           (o.table_label || "").toLowerCase().includes(searchQuery.toLowerCase());
       return matchesStatus && matchesSearch;
     });
   }, [orders, filterStatus, searchQuery]);
@@ -49,189 +59,219 @@ export default function OrdersPage() {
     setTimeout(() => setShowSuccess(null), 3000);
   };
 
-  const handleDelete = () => {
-    setOrders(prev => prev.filter(o => o.id !== selectedOrder.id));
-    setIsDeleteModalOpen(false);
-    triggerSuccess(`Order ${selectedOrder.id} successfully removed`);
+  const handleDelete = async () => {
+    try {
+      await deleteOrder(selectedOrder.id);
+      setOrders(prev => prev.filter(o => o.id !== selectedOrder.id));
+      setIsDeleteModalOpen(false);
+      triggerSuccess(`Order ${selectedOrder.order_number} successfully removed`);
+    } catch (err) {
+      console.error("Delete Error:", err);
+    }
   };
 
-  const handleUpdate = (e: React.FormEvent) => {
+  const addToBasket = (item: any) => {
+    setBasket(prev => {
+      const existing = prev.find(b => b.id === item.id);
+      if (existing) {
+        return prev.map(b => b.id === item.id ? { ...b, quantity: b.quantity + 1 } : b);
+      }
+      return [...prev, { ...item, quantity: 1 }];
+    });
+  };
+
+  const removeFromBasket = (id: string) => {
+    setBasket(prev => prev.map(b => b.id === id && b.quantity > 0 ? { ...b, quantity: b.quantity - 1 } : b).filter(b => b.quantity > 0));
+  };
+
+  useEffect(() => {
+    const total = basket.reduce((acc, b) => acc + (b.price * b.quantity), 0);
+    setBasketTotal(total);
+  }, [basket]);
+
+  const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsEditModalOpen(false);
-    triggerSuccess(`Order ${selectedOrder.id} details updated`);
+    if (basket.length === 0) return alert("Select at least one item.");
+    const formData = new FormData(e.target as HTMLFormElement);
+    try {
+      const newOrder = await createOrder({
+        table_label: formData.get("table") as string,
+        notes: formData.get("notes") as string,
+        status: "pending",
+        total_amount: basketTotal,
+        item_count: basket.reduce((acc, b) => acc + b.quantity, 0),
+        items: basket.map(b => ({ name: b.name, quantity: b.quantity, price: b.price }))
+      });
+      setOrders(prev => [newOrder, ...prev]);
+      setBasket([]);
+      setIsCreateModalOpen(false);
+      triggerSuccess("Order Registered in Terminal");
+    } catch (err) {
+      console.error("Create Error:", err);
+    }
   };
 
   return (
     <>
       <Topbar />
-      <main className="flex-1 overflow-y-auto custom-scrollbar p-8 pb-32 relative">
+      <main className="flex-1 overflow-y-auto custom-scrollbar p-8 pb-32 relative bg-[#050505]">
         <AnimatePresence>
           {showSuccess && (
-            <motion.div 
-              key="success-toast"
-              initial={{ opacity: 0, y: -20, x: "-50%" }}
-              animate={{ opacity: 1, y: 20, x: "-50%" }}
-              exit={{ opacity: 0, y: -20, x: "-50%" }}
-              className="fixed top-0 left-1/2 z-50 bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.4)] flex items-center gap-3 font-medium"
-            >
-              <CheckCircle className="w-5 h-5" />
-              {showSuccess}
+            <motion.div key="success-toast" initial={{ opacity: 0, y: -20, x: "-50%" }} animate={{ opacity: 1, y: 20, x: "-50%" }} exit={{ opacity: 0, y: -20, x: "-50%" }} className="fixed top-0 left-1/2 z-50 bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-glow shadow-emerald-500/20 flex items-center gap-3 font-bold uppercase tracking-widest text-[10px] pointer-events-none">
+              <CheckCircle className="w-5 h-5" /> {showSuccess}
             </motion.div>
           )}
 
-          {/* Edit Modal */}
-          {isEditModalOpen && selectedOrder && (
-            <div key="edit-modal" className="fixed inset-0 z-50 flex items-center justify-center p-4">
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsEditModalOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-md" />
-              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="relative w-full max-w-xl glass-card bg-[#0A0A0A]/80 border-white/10 p-8">
-                <div className="flex items-center justify-between mb-8">
-                  <h2 className="text-2xl font-outfit text-white">Edit Order <span className="text-amber-500">{selectedOrder.id}</span></h2>
-                  <button onClick={() => setIsEditModalOpen(false)} className="text-white/40 hover:text-white"><X /></button>
-                </div>
-                <form onSubmit={handleUpdate} className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-[10px] uppercase text-white/40 font-bold">Status</label>
-                      <select defaultValue={selectedOrder.status} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white">
-                        {Object.keys(statusConfig).map(s => <option key={s} value={s} className="bg-[#1A1A1A]">{s}</option>)}
-                      </select>
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-[10px] uppercase text-white/40 font-bold">Table</label>
-                      <input type="text" defaultValue={selectedOrder.table} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white" />
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-[10px] uppercase text-white/40 font-bold">Order Details</label>
-                    <textarea defaultValue={selectedOrder.details} className="w-full bg-white/5 border border-white/10 rounded-xl p-3 text-white min-h-[100px]"></textarea>
-                  </div>
-                  <button type="submit" className="w-full bg-amber-500 text-black font-bold py-4 rounded-xl">Save Changes</button>
-                </form>
-              </motion.div>
-            </div>
-          )}
-
-          {/* Delete Modal */}
           {isDeleteModalOpen && selectedOrder && (
             <div key="delete-modal" className="fixed inset-0 z-50 flex items-center justify-center p-4">
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsDeleteModalOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-md" />
-              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="relative w-full max-w-md glass-card bg-[#0A0A0A]/80 border-red-500/30 p-8 text-center">
-                <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Trash2 className="w-10 h-10 text-red-500" />
-                </div>
-                <h2 className="text-2xl font-outfit text-white mb-2">Delete Order?</h2>
-                <p className="text-white/40 mb-8 font-light italic">"Order {selectedOrder.id} for {selectedOrder.table} will be permanently voided."</p>
+              <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="relative w-full max-md glass-card bg-[#0A0A0A]/80 border-red-500/30 p-8 text-center shadow-2xl">
+                <div className="w-20 h-20 bg-red-500/10 rounded-full flex items-center justify-center mx-auto mb-6"><Trash2 className="w-10 h-10 text-red-500" /></div>
+                <h2 className="text-2xl font-outfit text-white mb-2 font-bold uppercase tracking-tight">Void Order?</h2>
+                <p className="text-white/40 mb-8 font-light italic uppercase tracking-tighter text-[10px]">"Order {selectedOrder.order_number} will be permanently decommissioned."</p>
                 <div className="flex gap-4">
-                  <button onClick={() => setIsDeleteModalOpen(false)} className="flex-1 py-3 border border-white/10 rounded-xl text-white">Cancel</button>
-                  <button onClick={handleDelete} className="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl shadow-[0_0_20px_rgba(239,68,68,0.3)]">Delete Order</button>
+                  <button onClick={() => setIsDeleteModalOpen(false)} className="flex-1 py-3 border border-white/5 rounded-xl text-white font-bold uppercase tracking-widest text-[10px]">Cancel</button>
+                  <button onClick={handleDelete} className="flex-1 py-3 bg-red-500 text-white font-bold rounded-xl shadow-glow shadow-red-500/20 uppercase tracking-widest text-[10px]">Confirm Void</button>
                 </div>
               </motion.div>
             </div>
           )}
 
-          {/* Create Modal */}
           {isCreateModalOpen && (
             <div key="create-modal" className="fixed inset-0 z-50 flex items-center justify-center p-4">
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsCreateModalOpen(false)} className="absolute inset-0 bg-black/60 backdrop-blur-md" />
-              <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-xl glass-card bg-[#0A0A0A]/80 border-white/10 p-8 shadow-[0_0_50px_rgba(0,0,0,0.5)]">
-                <div className="flex items-center justify-between mb-8">
+              <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-4xl glass-card bg-[#0A0A0A]/90 border-white/10 p-8 shadow-2xl overflow-hidden flex flex-col max-h-[85vh]">
+                <div className="flex items-center justify-between mb-8 text-white">
                   <div>
-                    <h2 className="text-2xl font-outfit font-light text-white">Create <span className="font-semibold text-amber-500">New Order</span></h2>
-                    <p className="text-white/40 text-sm mt-1">Fill in the details to start a new service.</p>
+                    <h2 className="text-2xl font-outfit uppercase tracking-widest">New <span className="text-amber-500 font-bold tracking-tight">Interactive Ticket</span></h2>
+                    <p className="text-white/20 text-[10px] uppercase font-bold tracking-[0.2em] mt-1">Configuring live order parameters and asset allocation.</p>
                   </div>
-                  <button onClick={() => setIsCreateModalOpen(false)} className="p-2 hover:bg-white/5 rounded-xl text-white/40 hover:text-white transition-colors"><X className="w-6 h-6" /></button>
+                  <button onClick={() => setIsCreateModalOpen(false)} className="text-white/40 hover:text-white transition-colors p-2 bg-white/5 rounded-full"><X className="w-5 h-5" /></button>
                 </div>
-                <form onSubmit={(e) => { e.preventDefault(); setIsCreateModalOpen(false); triggerSuccess("Order Created"); }} className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2">
-                       <label className="text-xs font-bold uppercase tracking-widest text-white/40 pl-1">Table Number</label>
-                       <input type="text" placeholder="e.g. T-04" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50" required />
-                    </div>
-                    <div className="space-y-2">
-                       <label className="text-xs font-bold uppercase tracking-widest text-white/40 pl-1">Order Type</label>
-                       <select className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white appearance-none">
-                         <option className="bg-[#1A1A1A]">Dine-in</option>
-                         <option className="bg-[#1A1A1A]">Takeaway</option>
-                         <option className="bg-[#1A1A1A]">Delivery</option>
-                       </select>
+
+                <div className="flex gap-8 overflow-hidden h-full">
+                  {/* Left Side: Menu Item Selection */}
+                  <div className="flex-1 overflow-y-auto pr-4 custom-scrollbar">
+                    <div className="grid grid-cols-2 gap-3 pb-8">
+                      {menuItems.map(item => (
+                        <button key={item.id} onClick={() => addToBasket(item)} className="p-4 glass-card bg-white/5 border-white/5 hover:border-amber-500/30 hover:bg-amber-500/5 text-left transition-all group relative overflow-hidden">
+                          <div className="flex justify-between items-start mb-2">
+                            <span className="text-[10px] font-bold text-white/40 uppercase group-hover:text-amber-500/50">{item.category}</span>
+                            <span className="text-xs font-bold text-amber-500 shadow-glow shadow-amber-500/10">${item.price}</span>
+                          </div>
+                          <h4 className="text-sm font-bold text-white group-hover:text-amber-400 transition-colors uppercase tracking-tight">{item.name}</h4>
+                          <div className="absolute -bottom-2 -right-2 opacity-10 group-active:scale-125 transition-transform"><Plus className="w-12 h-12" /></div>
+                        </button>
+                      ))}
                     </div>
                   </div>
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold uppercase tracking-widest text-white/40 pl-1">Items</label>
-                    <textarea placeholder="Order details..." className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white min-h-[100px] resize-none" required></textarea>
+
+                  {/* Right Side: Basket & Subtotal */}
+                  <div className="w-80 flex flex-col bg-black/40 border-l border-white/10 p-6 -mr-8 -my-8">
+                    <div className="flex items-center gap-2 mb-6">
+                      <ShoppingCart className="w-4 h-4 text-amber-500" />
+                      <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-[0.3em]">Allocation Basket</h3>
+                    </div>
+                    
+                    <div className="flex-1 overflow-y-auto space-y-4 pr-2 custom-scrollbar">
+                      <AnimatePresence>
+                        {basket.map(item => (
+                          <motion.div key={item.id} initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }} className="flex items-center justify-between group">
+                            <div>
+                              <h5 className="text-xs font-bold text-white uppercase tracking-tight line-clamp-1">{item.name}</h5>
+                              <p className="text-[9px] text-white/30 font-mono">${item.price} x {item.quantity}</p>
+                            </div>
+                            <div className="flex items-center gap-2 bg-white/5 p-1 rounded-lg">
+                              <button onClick={() => removeFromBasket(item.id)} className="p-1 hover:bg-white/10 rounded text-red-400 Transition-all"><Minus className="w-3 h-3" /></button>
+                              <span className="text-xs font-bold text-white min-w-[1ch] text-center">{item.quantity}</span>
+                              <button onClick={() => addToBasket(item)} className="p-1 hover:bg-white/10 rounded text-amber-500 transition-all"><Plus className="w-3 h-3" /></button>
+                            </div>
+                          </motion.div>
+                        ))}
+                        {basket.length === 0 && <div className="h-full flex items-center justify-center"><p className="text-[10px] uppercase font-bold text-white/10 tracking-[0.2em] italic">Archive Empty</p></div>}
+                      </AnimatePresence>
+                    </div>
+
+                    <form onSubmit={handleCreate} className="mt-8 space-y-4">
+                      <div className="space-y-4 border-t border-white/10 pt-6">
+                        <div>
+                          <label className="text-[9px] font-bold uppercase tracking-widest text-white/20 mb-2 block">Node Allocation (Table)</label>
+                          <input name="table" type="text" placeholder="e.g. T-04" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500/50 uppercase tracking-widest font-bold" required />
+                        </div>
+                        <div className="flex justify-between items-center bg-amber-500/5 p-4 rounded-xl border border-amber-500/10 mb-6">
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-amber-500/60 uppercase">System total</span>
+                            <span className="text-xl font-outfit font-black text-amber-500 tracking-tighter">${basketTotal.toLocaleString()}</span>
+                        </div>
+                        <button type="submit" disabled={basket.length === 0} className="w-full bg-amber-500 text-black font-black py-4 rounded-xl shadow-glow shadow-amber-500/20 active:scale-[0.98] transition-all uppercase tracking-[0.3em] text-[10px] disabled:opacity-20 disabled:grayscale">Broadcast to Kitchen</button>
+                      </div>
+                    </form>
                   </div>
-                  <button type="submit" className="w-full bg-amber-500 text-black font-bold py-4 rounded-xl shadow-[0_0_30px_rgba(245,158,11,0.2)]">Create Live Order</button>
-                </form>
+                </div>
               </motion.div>
             </div>
           )}
         </AnimatePresence>
 
-        <div className="mb-10 flex items-end justify-between relative z-10 transition-all">
+        <div className="mb-10 flex items-end justify-between relative z-10">
           <div>
-            <h1 className="text-4xl font-outfit font-light text-white tracking-tight">Order <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 filter drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">Management</span></h1>
-            <p className="text-white/50 mt-2 tracking-wide font-light text-sm">Real-time overview of all restaurant orders.</p>
+            <h1 className="text-4xl font-outfit font-light text-white tracking-tight uppercase tracking-[0.1em]">Order <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 filter drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">Registry</span></h1>
+            <p className="text-white/30 mt-3 tracking-[0.2em] font-bold text-[10px] uppercase italic">Live telemetry feed from terminal nodes. {orders.length} active entries.</p>
           </div>
-          
           <div className="flex items-center gap-4">
+            <div className="relative group shadow-glow shadow-white/5"><Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-400 transition-colors" /><input type="text" placeholder="Search ID or Table..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-black/40 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-xs w-64 text-white focus:outline-none focus:border-amber-500/50 transition-all uppercase tracking-tighter" /></div>
             <div className="relative group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/40 group-focus-within:text-amber-400 transition-colors" />
-              <input type="text" placeholder="Search ID or Table..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-black/40 border border-white/10 rounded-xl pl-11 pr-4 py-2.5 text-sm w-64 text-white focus:outline-none focus:border-amber-500/50" />
-            </div>
-            <div className="relative group">
-              <button className="flex items-center gap-2 bg-black/40 border border-white/10 hover:border-white/20 text-white px-4 py-2.5 rounded-xl transition-all hover:bg-white/5">
+              <button className="flex items-center gap-2 bg-black/40 border border-white/10 hover:border-white/20 text-white px-4 py-3 rounded-xl transition-all hover:bg-white/5">
                 <Filter className="w-4 h-4 text-white/60" />
-                <span className="text-sm font-medium capitalize">{filterStatus}</span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{filterStatus}</span>
               </button>
-              <div className="absolute top-full right-0 mt-2 w-40 glass-card bg-[#0A0A0A] border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 p-2 shadow-2xl">
-                {["all", "pending", "preparing", "ready", "served", "cancelled"].map(s => (
-                  <button key={s} onClick={() => setFilterStatus(s)} className="w-full text-left px-4 py-2 text-xs text-white/60 hover:text-white hover:bg-white/5 rounded-lg capitalize">{s}</button>
-                ))}
-              </div>
+              <div className="absolute top-full right-0 mt-2 w-40 glass-card bg-[#0A0A0A] border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 p-2 shadow-2xl">{["all", "pending", "preparing", "ready", "served", "cancelled"].map(s => (<button key={s} onClick={() => setFilterStatus(s)} className="w-full text-left px-4 py-2 text-[10px] uppercase font-bold text-white/30 hover:text-white hover:bg-white/5 rounded-lg tracking-widest">{s}</button>))}</div>
             </div>
-            <button onClick={() => setIsCreateModalOpen(true)} className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-black px-5 py-2.5 rounded-xl font-semibold tracking-wide transition-all shadow-[0_0_20px_rgba(245,158,11,0.2)] transform hover:-translate-y-0.5"><Plus className="w-5 h-5" /><span>Create Order</span></button>
+            <button onClick={() => setIsCreateModalOpen(true)} className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-black px-8 py-3 rounded-xl font-black tracking-[0.3em] text-[10px] transition-all shadow-glow shadow-amber-500/20 transform hover:-translate-y-0.5 uppercase active:scale-95"><Plus className="w-4 h-4" /><span>Open Ticket</span></button>
           </div>
         </div>
 
-        <div className="glass-card overflow-hidden relative z-10 border-white/5">
-          <div className="overflow-x-auto custom-scrollbar min-h-[400px]">
+        <div className="glass-card overflow-hidden relative z-10 border-white/5 shadow-2xl">
+          <div className="overflow-x-auto custom-scrollbar min-h-[450px]">
             <table className="w-full text-left border-collapse min-w-[800px]">
               <thead>
-                <tr className="border-b border-white/5 bg-black/20">
-                  <th className="px-6 py-4 text-xs font-semibold text-white/50 uppercase">Order ID</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-white/50 uppercase">Table</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-white/50 uppercase">Time</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-white/50 uppercase">Status</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-white/50 uppercase">Server</th>
-                  <th className="px-6 py-4 text-xs font-semibold text-white/50 uppercase">Total</th>
-                  <th className="px-6 py-4 text-right pr-8 text-xs font-semibold text-white/50 uppercase">Actions</th>
+                <tr className="border-b border-white/5 bg-black/40">
+                  <th className="px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest">Protocol ID</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest">Table Label</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest">Temporal Feed</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest">Status</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest">Capacity</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest">Asset Value</th>
+                  <th className="px-6 py-4 text-right pr-8 text-[10px] font-bold text-white/20 uppercase tracking-widest">Matrix</th>
                 </tr>
               </thead>
               <tbody className="relative">
-                {filteredOrders.length > 0 ? filteredOrders.map((order, i) => {
-                  const colors = statusConfig[order.status as keyof typeof statusConfig];
+                {loading ? (
+                   <tr><td colSpan={7} className="px-6 py-20 text-center"><RefreshCw className="w-8 h-8 text-amber-500/30 animate-spin mx-auto" /></td></tr>
+                ) : filteredOrders.length > 0 ? filteredOrders.map((order, i) => {
+                  const colors = statusConfig[order.status as keyof typeof statusConfig] || statusConfig.pending;
                   const StatusIcon = colors.icon;
                   return (
-                    <motion.tr key={order.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.05 }} className="border-b border-white/[0.02] hover:bg-white/[0.04] transition-colors group">
-                      <td className="px-6 py-5 whitespace-nowrap"><span className="font-mono text-sm font-medium text-white group-hover:text-amber-400 transition-colors">{order.id}</span></td>
-                      <td className="px-6 py-5 whitespace-nowrap text-sm text-white/80 font-medium">{order.table}</td>
-                      <td className="px-6 py-5 whitespace-nowrap text-sm text-white/60">{order.time}</td>
+                    <motion.tr key={order.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="border-b border-white/[0.02] hover:bg-white/[0.03] transition-colors group">
+                      <td className="px-6 py-5 whitespace-nowrap font-mono text-xs font-bold text-white group-hover:text-amber-400 transition-colors uppercase tracking-widest">{order.order_number}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-xs text-white/50 font-bold uppercase tracking-tighter">{order.table_label}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-[10px] font-mono text-white/30 uppercase">{new Date(order.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td>
                       <td className="px-6 py-5 whitespace-nowrap">
-                        <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${colors.bg} ${colors.color} ${colors.border}`}>
-                          <StatusIcon className="w-3.5 h-3.5" /> <span className="capitalize">{order.status}</span>
+                        <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[9px] font-bold border ${colors.bg} ${colors.color} ${colors.border} uppercase tracking-[0.2em] shadow-inner`}>
+                          <StatusIcon className="w-3 h-3" /> {order.status}
                         </div>
                       </td>
-                      <td className="px-6 py-5 whitespace-nowrap text-sm text-white/70">{order.server}</td>
-                      <td className="px-6 py-5 whitespace-nowrap text-sm font-semibold text-white">{order.total}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-[10px] text-white/40 uppercase tracking-widest font-bold">{order.item_count || 0} Assets</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm font-black text-white tracking-widest shadow-glow shadow-white/5">${(order.total_amount || 0).toLocaleString()} <span className="text-[9px] opacity-10 font-bold">CREDITS</span></td>
                       <td className="px-6 py-5 whitespace-nowrap text-right pr-8 relative">
-                        <button onClick={(e) => { e.stopPropagation(); setActiveActionMenu(activeActionMenu === order.id ? null : order.id); }} className="text-white/40 hover:text-white p-2 hover:bg-white/10 rounded-lg"><MoreHorizontal /></button>
+                        <button onClick={(e) => { e.stopPropagation(); setActiveActionMenu(activeActionMenu === order.id ? null : order.id); }} className="text-white/20 hover:text-white p-2 hover:bg-white/10 rounded-lg transition-colors"><MoreHorizontal className="w-5 h-5 transition-transform group-hover:scale-110" /></button>
                         <AnimatePresence>
                           {activeActionMenu === order.id && (
                             <motion.div key={`action-container-${order.id}`}>
                               <div className="fixed inset-0 z-40" onClick={() => setActiveActionMenu(null)} />
-                              <motion.div initial={{ opacity: 0, scale: 0.95, x: 10 }} animate={{ opacity: 1, scale: 1, x: 0 }} exit={{ opacity: 0, scale: 0.95, x: 10 }} className="absolute right-16 top-1/2 -translate-y-1/2 z-50 w-40 glass-card bg-[#0A0A0A] border-white/10 p-1.5 shadow-2xl">
-                                <button onClick={() => { setSelectedOrder(order); setIsEditModalOpen(true); setActiveActionMenu(null); }} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-white/60 hover:text-white hover:bg-white/5 rounded-md"><Edit className="w-3.5 h-3.5" /> Edit Order</button>
-                                <button onClick={() => { setSelectedOrder(order); setIsDeleteModalOpen(true); setActiveActionMenu(null); }} className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-400/60 hover:text-red-400 hover:bg-red-500/10 rounded-md font-medium"><Trash2 className="w-3.5 h-3.5" /> Delete</button>
+                              <motion.div initial={{ opacity: 0, scale: 0.95, x: 10 }} animate={{ opacity: 1, scale: 1, x: 0 }} exit={{ opacity: 0, scale: 0.95, x: 10 }} className="absolute right-16 top-1/2 -translate-y-1/2 z-50 w-48 glass-card bg-[#0A0A0A] border-white/10 p-2 shadow-2xl overflow-hidden">
+                                <div className="absolute top-0 right-0 w-full h-1 bg-red-500/20" />
+                                <button onClick={() => { setSelectedOrder(order); setIsDeleteModalOpen(true); setActiveActionMenu(null); }} className="w-full flex items-center gap-3 px-3 py-3 text-[10px] font-bold text-red-400 group/btn rounded-lg uppercase tracking-widest transition-all hover:bg-red-500/10"><Trash2 className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" /> Decommission</button>
+                                <button onClick={() => setActiveActionMenu(null)} className="w-full flex items-center gap-3 px-3 py-3 text-[10px] font-bold text-white/20 hover:text-white hover:bg-white/5 rounded-lg uppercase tracking-widest transition-all"><Edit className="w-3.5 h-3.5" /> Modify State</button>
                               </motion.div>
                             </motion.div>
                           )}
@@ -240,16 +280,17 @@ export default function OrdersPage() {
                     </motion.tr>
                   );
                 }) : (
-                  <tr key="no-matches"><td colSpan={7} className="px-6 py-20 text-center text-white/20 uppercase tracking-[0.2em] text-xs font-light">No matching orders found</td></tr>
+                  <tr key="no-matches"><td colSpan={7} className="px-6 py-20 text-center text-white/10 uppercase tracking-[0.4em] text-[10px] font-black italic">Archive Empty // No active telemetry found</td></tr>
                 )}
               </tbody>
             </table>
           </div>
-          <div className="px-6 py-4 border-t border-white/5 flex items-center justify-between text-sm text-white/50 bg-black/10">
-            <span>Showing {filteredOrders.length} of {orders.length} orders</span>
-            <div className="flex gap-2">
-              <button disabled={currentPage === 1} className="p-2 bg-white/5 hover:bg-white/10 rounded-md disabled:opacity-30"><ChevronLeft className="w-4 h-4" /></button>
-              <button onClick={() => triggerSuccess("Simulating Page Transition...")} className="p-2 bg-white/5 hover:bg-white/10 rounded-md"><ChevronRight className="w-4 h-4" /></button>
+          <div className="px-8 py-5 border-t border-white/5 flex items-center justify-between text-[10px] font-bold text-white/10 bg-black/20 uppercase tracking-[0.2em] shadow-inner font-mono">
+            <span>Archive Nodes Active - Node Sync: ONLINE</span>
+            <div className="flex gap-4">
+              <span className="text-white/5">PAGE_01_FEED</span>
+              <button disabled className="p-2 bg-white/5 hover:bg-white/10 rounded-lg disabled:opacity-5 transition-all"><ChevronLeft className="w-4 h-4" /></button>
+              <button className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-all"><ChevronRight className="w-4 h-4" /></button>
             </div>
           </div>
         </div>
