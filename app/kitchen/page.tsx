@@ -43,7 +43,7 @@ export default function KitchenPage() {
     const RID = process.env.NEXT_PUBLIC_RESTAURANT_ID;
     if (!RID) return;
 
-    let channel;
+    let channel: any;
     try {
       channel = supabase
       .channel("kitchen-realtime")

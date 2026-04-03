@@ -398,7 +398,7 @@ export async function getReservations(date?: string) {
   return data ?? [];
 }
 
-export async function createReservation(res: { customer_name: string; party_size: number; reservation_date: string; reservation_time: string; table_id?: string; phone?: string; email?: string; notes?: string; }) {
+export async function createReservation(res: { customer_name: string; party_size: number; reservation_date: string; reservation_time: string; table_id?: string; phone?: string; email?: string; notes?: string; status?: string; }) {
   const supabase = createClient();
   const { data, error } = await supabase
     .from('reservations')
