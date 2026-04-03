@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -96,7 +96,7 @@ export default function TablesPage() {
   return (
     <>
       <Topbar />
-      <main className="flex-1 overflow-y-auto custom-scrollbar p-8 pb-32 relative bg-[#050505]">
+      <main className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 pb-32 relative bg-[#050505]">
         <AnimatePresence>
           {showSuccess && (
             <motion.div key="success-toast" initial={{ opacity: 0, y: -20, x: "-50%" }} animate={{ opacity: 1, y: 20, x: "-50%" }} exit={{ opacity: 0, y: -20, x: "-50%" }} className="fixed top-0 left-1/2 z-50 bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.4)] flex items-center gap-3 font-medium pointer-events-none">
@@ -167,10 +167,10 @@ export default function TablesPage() {
 
         <div className="mb-10 flex items-center justify-between relative z-10 transition-colors">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="space-y-1">
-            <h1 className="text-4xl font-outfit font-light tracking-tight text-white">Floor <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 filter drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">Registry</span></h1>
+            <h1 className="text-2xl md:text-4xl font-outfit font-light tracking-tight text-white">Floor <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 filter drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">Registry</span></h1>
             <div className="flex items-center gap-2 text-white/40 text-[10px] font-bold tracking-[0.2em] uppercase"><CheckCircle2 size={12} className="text-emerald-500/60" /> Live Update Feed • Synchronized {lastUpdated || "Now"}</div>
           </motion.div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={loadTables} className="bg-black/40 border border-white/10 hover:border-white/20 text-white px-4 py-2.5 rounded-xl transition-all hover:bg-white/5 flex items-center gap-2 font-semibold text-sm">
               <RefreshCw size={18} className={`text-amber-500 ${loading ? "animate-spin" : ""}`} />
               <span className="text-[10px] font-extrabold uppercase tracking-widest whitespace-nowrap">Refresh Floor</span>

@@ -1,4 +1,4 @@
-﻿import { createClient } from './supabase/client';
+import { createClient } from './supabase/client';
 
 const RID = process.env.NEXT_PUBLIC_RESTAURANT_ID!;
 

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Topbar from "@/components/Topbar";
 import { motion, AnimatePresence } from "framer-motion";
@@ -43,7 +43,9 @@ export default function KitchenPage() {
     const RID = process.env.NEXT_PUBLIC_RESTAURANT_ID;
     if (!RID) return;
 
-    const channel = supabase
+    let channel;
+    try {
+      channel = supabase
       .channel("kitchen-realtime")
       .on("postgres_changes", {
         event: "*",
@@ -52,9 +54,12 @@ export default function KitchenPage() {
         filter: `restaurant_id=eq.${RID}`,
       }, () => loadTickets())
       .subscribe();
+    } catch (e) {
+      console.warn("Realtime subscription failed - likely missing env vars. Falling back to static data.", e);
+    }
 
     return () => {
-      supabase.removeChannel(channel);
+      if (channel) supabase.removeChannel(channel);
     };
   }, []);
 
@@ -89,7 +94,7 @@ export default function KitchenPage() {
   return (
     <>
       <Topbar />
-      <main className="flex-1 p-8 relative flex flex-col h-[calc(100vh-80px)] bg-[#050505] overflow-hidden">
+      <main className="flex-1 p-4 md:p-8 relative flex flex-col h-[calc(100vh-80px)] bg-[#050505] overflow-hidden">
         <AnimatePresence>
           {showSuccess && (
             <motion.div key="success-toast" initial={{ opacity: 0, y: -20, x: "-50%" }} animate={{ opacity: 1, y: 20, x: "-50%" }} exit={{ opacity: 0, y: -20, x: "-50%" }} className="fixed top-0 left-1/2 z-50 bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-glow shadow-emerald-500/20 flex items-center gap-3 font-bold uppercase tracking-widest text-[10px] pointer-events-none">
@@ -98,7 +103,7 @@ export default function KitchenPage() {
           )}
         </AnimatePresence>
 
-        <div className="mb-10 flex items-end justify-between relative z-10 shrink-0">
+        <div className="mb-10 flex !flex-col sm:!flex-row sm:items-end justify-between gap-6 relative z-10 shrink-0">
           <div>
             <h1 className="text-4xl font-outfit font-light text-white tracking-tight uppercase tracking-widest">Kitchen <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 filter drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">Display</span></h1>
             <p className="text-white/30 mt-3 tracking-[0.2em] font-bold text-[10px] flex items-center gap-2 uppercase italic">
@@ -110,14 +115,14 @@ export default function KitchenPage() {
           </div>
         </div>
 
-        <div className="flex-1 overflow-x-auto custom-scrollbar flex gap-8 pb-10 relative z-10 snap-x h-full">
+        <div className="flex-1 overflow-y-auto custom-scrollbar grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 pb-10 relative z-10 h-full">
           {loading ? (
              <div className="w-full flex items-center justify-center"><RefreshCw className="w-10 h-10 text-amber-500/30 animate-spin" /></div>
           ) : tickets.length > 0 ? tickets.map((ticket, i) => {
             const isPreparing = ticket.status === "preparing";
             const isReady = ticket.status === "ready";
             return (
-              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} layout key={ticket.id} className={`min-w-[380px] max-w-[380px] shrink-0 glass-card bg-[#0A0A0A]/60 flex flex-col snap-start border-t-8 h-full ${ticket.urgency === "critical" ? "border-t-red-500" : ticket.urgency === "high" ? "border-t-amber-500" : "border-t-white/10"}`}>
+              <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} layout key={ticket.id} className={`w-full glass-card bg-[#0A0A0A]/60 flex flex-col snap-start border-t-8 h-full ${ticket.urgency === "critical" ? "border-t-red-500" : ticket.urgency === "high" ? "border-t-amber-500" : "border-t-white/10"}`}>
                 <div className="p-8 border-b border-white/5 bg-black/40 flex items-center justify-between">
                   <div>
                     <h3 className="text-2xl font-black text-white uppercase">{ticket.table}</h3>

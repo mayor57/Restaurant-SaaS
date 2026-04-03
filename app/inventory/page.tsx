@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Topbar from "@/components/Topbar";
 import { motion, AnimatePresence } from "framer-motion";
@@ -105,7 +105,7 @@ export default function InventoryPage() {
   return (
     <>
       <Topbar />
-      <main className="flex-1 overflow-y-auto custom-scrollbar p-8 pb-32 relative bg-[#050505]">
+      <main className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 pb-32 relative bg-[#050505]">
         <AnimatePresence>
           {showSuccess && (
             <motion.div key="success-toast" initial={{ opacity: 0, y: -20, x: "-50%" }} animate={{ opacity: 1, y: 20, x: "-50%" }} exit={{ opacity: 0, y: -20, x: "-50%" }} className="fixed top-0 left-1/2 z-[100] bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-glow shadow-emerald-500/20 flex items-center gap-3 font-bold uppercase tracking-widest text-[10px] pointer-events-none">
@@ -167,14 +167,14 @@ export default function InventoryPage() {
 
         <div className="mb-14 flex items-end justify-between relative z-10 transition-all">
           <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-            <h1 className="text-4xl font-outfit font-light text-white tracking-tight uppercase tracking-widest">
+            <h1 className="text-2xl md:text-4xl font-outfit font-light text-white tracking-tight uppercase tracking-widest">
               Inventory <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 filter drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">Control</span>
             </h1>
             <p className="text-white/30 mt-3 tracking-[0.2em] font-bold text-[10px] uppercase italic">
               "Systematic local supply chain." Tracking {inventory.length} global entities.
             </p>
           </motion.div>
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
             <div className="relative group shadow-glow shadow-white/5 transition-all">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-400 transition-colors" />
               <input type="text" placeholder="Search product registry..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-black/40 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs w-64 text-white focus:outline-none focus:border-amber-500/50 transition-all uppercase tracking-tighter" />

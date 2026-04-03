@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Topbar from "@/components/Topbar";
 import { motion, AnimatePresence } from "framer-motion";
@@ -114,7 +114,7 @@ export default function OrdersPage() {
   return (
     <>
       <Topbar />
-      <main className="flex-1 overflow-y-auto custom-scrollbar p-8 pb-32 relative bg-[#050505]">
+      <main className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 pb-32 relative bg-[#050505]">
         <AnimatePresence>
           {showSuccess && (
             <motion.div key="success-toast" initial={{ opacity: 0, y: -20, x: "-50%" }} animate={{ opacity: 1, y: 20, x: "-50%" }} exit={{ opacity: 0, y: -20, x: "-50%" }} className="fixed top-0 left-1/2 z-50 bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-glow shadow-emerald-500/20 flex items-center gap-3 font-bold uppercase tracking-widest text-[10px] pointer-events-none">
@@ -212,13 +212,13 @@ export default function OrdersPage() {
           )}
         </AnimatePresence>
 
-        <div className="mb-10 flex items-end justify-between relative z-10">
+        <div className="mb-10 flex !flex-col sm:!flex-row sm:items-end justify-between gap-6 relative z-10">
           <div>
-            <h1 className="text-4xl font-outfit font-light text-white tracking-tight uppercase tracking-[0.1em]">Order <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 filter drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">Registry</span></h1>
+            <h1 className="text-3xl md:text-4xl font-outfit font-light text-white tracking-tight uppercase tracking-[0.1em]">Order <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 filter drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">Registry</span></h1>
             <p className="text-white/30 mt-3 tracking-[0.2em] font-bold text-[10px] uppercase italic">Live telemetry feed from terminal nodes. {orders.length} active entries.</p>
           </div>
-          <div className="flex items-center gap-4">
-            <div className="relative group shadow-glow shadow-white/5"><Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-400 transition-colors" /><input type="text" placeholder="Search ID or Table..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-black/40 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-xs w-64 text-white focus:outline-none focus:border-amber-500/50 transition-all uppercase tracking-tighter" /></div>
+          <div className="flex !flex-col sm:!flex-row items-center gap-4 w-full sm:w-auto">
+            <div className="relative group shadow-glow shadow-white/5"><Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-400 transition-colors" /><input type="text" placeholder="Search ID or Table..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-black/40 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-xs w-full sm:w-64 text-white focus:outline-none focus:border-amber-500/50 transition-all uppercase tracking-tighter" /></div>
             <div className="relative group">
               <button className="flex items-center gap-2 bg-black/40 border border-white/10 hover:border-white/20 text-white px-4 py-3 rounded-xl transition-all hover:bg-white/5">
                 <Filter className="w-4 h-4 text-white/60" />
@@ -235,12 +235,12 @@ export default function OrdersPage() {
             <table className="w-full text-left border-collapse min-w-[800px]">
               <thead>
                 <tr className="border-b border-white/5 bg-black/40">
-                  <th className="px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest">Protocol ID</th>
+                  <th className="hidden md:table-cell px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest">Protocol ID</th>
                   <th className="px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest">Table Label</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest">Temporal Feed</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest hidden xl:table-cell">Temporal Feed</th>
                   <th className="px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest">Status</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest">Capacity</th>
-                  <th className="px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest">Asset Value</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest hidden sm:table-cell">Capacity</th>
+                  <th className="px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest hidden lg:table-cell">Asset Value</th>
                   <th className="px-6 py-4 text-right pr-8 text-[10px] font-bold text-white/20 uppercase tracking-widest">Matrix</th>
                 </tr>
               </thead>
@@ -252,16 +252,16 @@ export default function OrdersPage() {
                   const StatusIcon = colors.icon;
                   return (
                     <motion.tr key={order.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="border-b border-white/[0.02] hover:bg-white/[0.03] transition-colors group">
-                      <td className="px-6 py-5 whitespace-nowrap font-mono text-xs font-bold text-white group-hover:text-amber-400 transition-colors uppercase tracking-widest">{order.order_number}</td>
+                      <td className="px-6 py-5 whitespace-nowrap font-mono text-xs font-bold text-white group-hover:text-amber-400 transition-colors uppercase tracking-widest hidden md:table-cell">{order.order_number}</td>
                       <td className="px-6 py-5 whitespace-nowrap text-xs text-white/50 font-bold uppercase tracking-tighter">{order.table_label}</td>
-                      <td className="px-6 py-5 whitespace-nowrap text-[10px] font-mono text-white/30 uppercase">{new Date(order.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-[10px] font-mono text-white/30 uppercase hidden xl:table-cell">{new Date(order.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td>
                       <td className="px-6 py-5 whitespace-nowrap">
                         <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[9px] font-bold border ${colors.bg} ${colors.color} ${colors.border} uppercase tracking-[0.2em] shadow-inner`}>
                           <StatusIcon className="w-3 h-3" /> {order.status}
                         </div>
                       </td>
-                      <td className="px-6 py-5 whitespace-nowrap text-[10px] text-white/40 uppercase tracking-widest font-bold">{order.item_count || 0} Assets</td>
-                      <td className="px-6 py-5 whitespace-nowrap text-sm font-black text-white tracking-widest shadow-glow shadow-white/5">${(order.total_amount || 0).toLocaleString()} <span className="text-[9px] opacity-10 font-bold">CREDITS</span></td>
+                      <td className="px-6 py-5 whitespace-nowrap text-[10px] text-white/40 uppercase tracking-widest font-bold hidden sm:table-cell">{order.item_count || 0} Assets</td>
+                      <td className="px-6 py-5 whitespace-nowrap text-sm font-black text-white tracking-widest shadow-glow shadow-white/5 hidden lg:table-cell">${(order.total_amount || 0).toLocaleString()} <span className="text-[9px] opacity-10 font-bold">CREDITS</span></td>
                       <td className="px-6 py-5 whitespace-nowrap text-right pr-8 relative">
                         <button onClick={(e) => { e.stopPropagation(); setActiveActionMenu(activeActionMenu === order.id ? null : order.id); }} className="text-white/20 hover:text-white p-2 hover:bg-white/10 rounded-lg transition-colors"><MoreHorizontal className="w-5 h-5 transition-transform group-hover:scale-110" /></button>
                         <AnimatePresence>

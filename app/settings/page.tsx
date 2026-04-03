@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import Topbar from "@/components/Topbar";
 import { motion, AnimatePresence } from "framer-motion";
