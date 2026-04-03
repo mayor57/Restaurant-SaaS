@@ -96,7 +96,7 @@ export default function TablesPage() {
   return (
     <>
       <Topbar />
-      <main className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 pb-32 relative bg-[#050505]">
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto pb-32">
         <AnimatePresence>
           {showSuccess && (
             <motion.div key="success-toast" initial={{ opacity: 0, y: -20, x: "-50%" }} animate={{ opacity: 1, y: 20, x: "-50%" }} exit={{ opacity: 0, y: -20, x: "-50%" }} className="fixed top-0 left-1/2 z-50 bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.4)] flex items-center gap-3 font-medium pointer-events-none">
@@ -119,7 +119,14 @@ export default function TablesPage() {
                     <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-widest text-white/40">Capacity</label><input type="number" min="1" max="12" placeholder="4" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50" required /></div>
                     <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-widest text-white/40">Floor Section</label><select className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white appearance-none focus:outline-none focus:border-amber-500/50"><option>Main Dining</option><option>Terrace</option><option>Bar Area</option></select></div>
                   </div>
-                  <button type="submit" className="w-full bg-amber-500 text-black font-bold py-4 rounded-xl shadow-xl transform hover:-translate-y-0.5 transition-all uppercase tracking-widest">Add Table to Map</button>
+                  <button 
+            
+            className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
+          >
+            
+            Add Table to Map
+          
+          </button>
                 </form>
               </motion.div>
             </div>
@@ -197,7 +204,14 @@ export default function TablesPage() {
         <div className="relative z-10">
           <motion.div initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} className="glass-card border-white/5 overflow-hidden shadow-2xl">
             {error ? (
-              <div className="flex flex-col items-center justify-center gap-4 text-center p-20 uppercase tracking-widest"><AlertCircle size={48} className="text-red-500 opacity-50" /><p className="text-xl font-outfit font-bold text-white/80">{error}</p><button onClick={loadTables} className="mt-4 px-8 py-3 bg-amber-500 text-black font-bold rounded-xl shadow-xl uppercase tracking-widest">Retry Sync</button></div>
+              <div className="flex flex-col items-center justify-center gap-4 text-center p-20 uppercase tracking-widest"><AlertCircle size={48} className="text-red-500 opacity-50" /><p className="text-xl font-outfit font-bold text-white/80">{error}</p><button 
+            onClick={loadTables}
+            className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
+          >
+            
+            Retry Sync
+          
+          </button></div>
             ) : (
               <div className="w-full">
                 {loading && tables.length === 0 ? (

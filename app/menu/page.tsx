@@ -98,7 +98,7 @@ export default function MenuPage() {
   return (
     <>
       <Topbar />
-      <main className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 pb-32 relative bg-[#050505]">
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto pb-32">
         <AnimatePresence>
           {showSuccess && (
             <motion.div key="success-toast" initial={{ opacity: 0, y: -20, x: "-50%" }} animate={{ opacity: 1, y: 20, x: "-50%" }} exit={{ opacity: 0, y: -20, x: "-50%" }} className="fixed top-0 left-1/2 z-50 bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-glow shadow-emerald-500/20 flex items-center gap-3 font-bold uppercase tracking-widest text-[10px] pointer-events-none">
@@ -128,7 +128,14 @@ export default function MenuPage() {
                     <select name="category" className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-amber-500/50 transition-all uppercase text-xs font-bold appearance-none"><option className="bg-[#1A1A1A]">Starters</option><option className="bg-[#1A1A1A]">Mains</option><option className="bg-[#1A1A1A]">Beverages</option><option className="bg-[#1A1A1A]">Desserts</option></select>
                   </div>
                   <div className="space-y-3"><label className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30 ml-1">Sensory Profile (Description)</label><textarea name="description" placeholder="Specify ingredients and composition..." className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white min-h-[120px] resize-none focus:outline-none focus:border-amber-500/50 transition-all text-xs font-light leading-relaxed italic" required></textarea></div>
-                  <button type="submit" className="w-full bg-amber-500 text-black font-bold py-5 rounded-xl shadow-glow shadow-amber-500/20 transform hover:-translate-y-0.5 transition-all text-[11px] uppercase tracking-[0.3em]">Broadcast to All Terminals</button>
+                  <button 
+            
+            className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
+          >
+            
+            Broadcast to All Terminals
+          
+          </button>
                 </form>
               </motion.div>
             </div>
@@ -156,7 +163,14 @@ export default function MenuPage() {
                    <select name="category" defaultValue={editingItem.category} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white focus:outline-none focus:border-amber-500/50 appearance-none uppercase text-xs font-bold"><option className="bg-[#1A1A1A]">Starters</option><option className="bg-[#1A1A1A]">Mains</option><option className="bg-[#1A1A1A]">Beverages</option><option className="bg-[#1A1A1A]">Desserts</option></select>
                  </div>
                  <div className="space-y-3"><label className="text-[10px] font-bold uppercase tracking-widest text-white/30 ml-1">Sensory Profile</label><textarea name="description" defaultValue={editingItem.description} className="w-full bg-white/5 border border-white/10 rounded-xl px-5 py-4 text-white min-h-[120px] resize-none focus:outline-none focus:border-amber-500/50 transition-all text-xs font-light leading-relaxed italic" required></textarea></div>
-                 <button type="submit" className="w-full bg-amber-500 text-black font-bold py-5 rounded-xl shadow-glow shadow-amber-500/10 uppercase tracking-[0.3em] text-[11px]">Re-Broadcast Asset</button>
+                 <button 
+            
+            className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
+          >
+            
+            Re-Broadcast Asset
+          
+          </button>
                </form>
              </motion.div>
            </div>

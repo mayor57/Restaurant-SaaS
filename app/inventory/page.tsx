@@ -105,7 +105,7 @@ export default function InventoryPage() {
   return (
     <>
       <Topbar />
-      <main className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 pb-32 relative bg-[#050505]">
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto pb-32">
         <AnimatePresence>
           {showSuccess && (
             <motion.div key="success-toast" initial={{ opacity: 0, y: -20, x: "-50%" }} animate={{ opacity: 1, y: 20, x: "-50%" }} exit={{ opacity: 0, y: -20, x: "-50%" }} className="fixed top-0 left-1/2 z-[100] bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-glow shadow-emerald-500/20 flex items-center gap-3 font-bold uppercase tracking-widest text-[10px] pointer-events-none">
@@ -158,7 +158,14 @@ export default function InventoryPage() {
                     <input name="supplier" type="text" defaultValue={selectedItem?.supplier} placeholder="SUPPLIER_SIGNATURE" className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white focus:outline-none focus:border-amber-500/50 uppercase tracking-tighter" />
                   </div>
 
-                  <button type="submit" className="w-full bg-amber-500 text-black font-black py-5 rounded-2xl shadow-glow shadow-amber-500/20 transform hover:-translate-y-1 transition-all uppercase tracking-[0.4em] text-[11px] active:scale-95">{isEditModalOpen ? "Commit Calibration" : "Register New Asset"}</button>
+                  <button 
+            
+            className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
+          >
+            
+            {isEditModalOpen ? "Commit Calibration" : "Register New Asset"}
+          
+          </button>
                 </form>
               </motion.div>
             </div>

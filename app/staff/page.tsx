@@ -149,30 +149,34 @@ export default function StaffPage() {
   return (
     <div className="p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto">
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight text-white mb-1">Staff Management</h1>
-          <p className="text-white/50">Manage your dream team and coordinate shifts.</p>
+      <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
+        <div className="space-y-1">
+          <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase mb-2">
+            STAFF <span className="text-amber-500 font-black">MANAGEMENT</span>
+          </h1>
+          <p className="text-white/40 text-sm md:text-base font-medium tracking-widest uppercase opacity-70">
+            TEAM ROSTER AND SHIFT COORDINATION TERMINAL.
+          </p>
         </div>
-        <div className="flex gap-3">
-          <div className="relative group">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30 group-focus-within:text-blue-400 transition-colors" />
-            <input 
-              type="text"
-              placeholder="Search staff..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10 pr-4 py-2.5 bg-white/5 border border-white/10 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500/50 w-full sm:w-64 transition-all"
-            />
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto">
+            <div className="relative w-full sm:w-80 group shadow-glow shadow-white/5">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-400 transition-colors" />
+              <input 
+                type="text"
+                placeholder="SEARCH STAFF REGISTRY..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-12 pr-4 py-4 bg-white/[0.03] border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all uppercase tracking-wider text-xs font-bold text-white"
+              />
+            </div>
+            <button 
+              onClick={() => setIsAddModalOpen(true)}
+              className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
+            >
+              <UserPlus className="w-5 h-5 stroke-[3]" />
+              ONBOARD STAFF
+            </button>
           </div>
-          <button 
-            onClick={() => setIsAddModalOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white rounded-xl font-medium transition-all shadow-lg shadow-blue-900/20 active:scale-95"
-          >
-            <UserPlus className="w-4 h-4" />
-            Onboard Staff
-          </button>
-        </div>
       </div>
 
       {/* Stats Cards */}
@@ -351,9 +355,16 @@ export default function StaffPage() {
                 </div>
                 <div className="flex gap-3 pt-4">
                   <button type="button" onClick={() => { setIsAddModalOpen(false); setIsEditModalOpen(false); }} className="flex-1 px-4 py-3 bg-white/5 hover:bg-white/10 text-white font-medium rounded-xl transition-colors">Cancel</button>
-                  <button type="submit" className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-xl transition-all shadow-lg shadow-blue-900/20 active:scale-95">
+                  <button 
+            
+            className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
+          >
+            
+            
                     {isEditModalOpen ? 'Save Changes' : 'Complete Onboarding'}
-                  </button>
+                  
+          
+          </button>
                 </div>
               </form>
             </motion.div>
@@ -389,7 +400,14 @@ export default function StaffPage() {
                 </div>
                 <div className="flex gap-3 pt-4">
                   <button type="button" onClick={() => setIsShiftModalOpen(false)} className="flex-1 px-4 py-2 text-white/60 hover:text-white transition-colors">Cancel</button>
-                  <button type="submit" className="flex-1 px-4 py-3 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl transition-all shadow-lg active:scale-95">Commit to Roster</button>
+                  <button 
+            
+            className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
+          >
+            
+            Commit to Roster
+          
+          </button>
                 </div>
               </form>
             </motion.div>

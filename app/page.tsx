@@ -95,7 +95,7 @@ export default function Dashboard() {
   return (
     <>
       <Topbar />
-      <main className="flex-1 overflow-y-auto custom-scrollbar p-4 lg:p-8 pb-32 relative bg-[#050505]">
+            <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto pb-32">
         <AnimatePresence>
           {showSuccess && (
             <motion.div key="success-toast" initial={{ opacity: 0, y: -20, x: "-50%" }} animate={{ opacity: 1, y: 20, x: "-50%" }} exit={{ opacity: 0, y: -20, x: "-50%" }} className="fixed top-0 left-1/2 z-50 bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-glow shadow-emerald-500/20 flex items-center gap-3 font-bold uppercase tracking-widest text-[9px] pointer-events-none">
@@ -104,24 +104,27 @@ export default function Dashboard() {
           )}
         </AnimatePresence>
 
-        <div className="mb-10 lg:mb-14 flex flex-col sm:flex-row items-start sm:items-end justify-between gap-6 relative z-10">
-          <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}>
-            <h1 className="text-2xl lg:text-4xl font-outfit font-light text-white tracking-widest uppercase">
-              Performance <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 filter drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">Telemetry</span>
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12 relative z-10">
+          <div className="space-y-1">
+            <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none text-white">
+              DASHBOARD <span className="text-amber-500 font-black">SUMMARY</span>
             </h1>
-            <p className="text-white/30 mt-3 tracking-[0.2em] font-bold text-[9px] uppercase italic">
-              "System Health: Operational." {data.liveOrders.length} service tickets, {freeCount} nodes available.
+            <p className="text-white/40 text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase opacity-70 flex items-center gap-2">
+              <span className="w-8 h-[1px] bg-amber-500/30"></span>
+              GLOBAL OPERATIONS OVERVIEW.
             </p>
-          </motion.div>
+          </div>
           <div className="flex gap-3 w-full sm:w-auto">
             <button 
               onClick={() => { triggerSuccess("Global Sync Initiated"); loadData(); }}
-              className="p-3 bg-white/5 hover:bg-white/10 rounded-xl border border-white/5 transition-all text-white/40 hover:text-white flex-1 sm:flex-none flex items-center justify-center"
+              className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 transition-all text-white/40 hover:text-white flex-1 sm:flex-none flex items-center justify-center"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className="w-5 h-5" />
             </button>
             <Link href="/orders" className="flex-1 sm:flex-none">
-              <button className="w-full bg-amber-500 hover:bg-amber-400 text-black font-black tracking-[0.2em] px-6 lg:px-8 py-3 rounded-xl transition-all shadow-glow shadow-amber-500/20 transform hover:-translate-y-0.5 text-[9px] uppercase whitespace-nowrap">
+              <button 
+                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full"
+              >
                 Live View
               </button>
             </Link>
@@ -196,9 +199,16 @@ export default function Dashboard() {
                             <span className="text-[8px] text-white/20 font-mono font-bold tracking-widest">{alert.qty} {alert.unit} REMAINING</span>
                           </div>
                         </div>
-                        <button className="text-[8px] font-black uppercase tracking-[0.2em] text-amber-500 hover:text-black hover:bg-amber-500 bg-amber-500/10 px-3 py-1.5 rounded-lg transition-all border border-amber-500/20">
+                        <button 
+            
+            className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
+          >
+            
+            
                           {alert.action || "Fix"}
-                        </button>
+                        
+          
+          </button>
                       </motion.div>
                     ))
                  ) : (

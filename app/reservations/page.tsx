@@ -112,7 +112,7 @@ export default function ReservationsPage() {
   return (
     <>
       <Topbar />
-      <main className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 pb-32 relative bg-[#050505]">
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto pb-32">
         <AnimatePresence>
           {showSuccess && (
             <motion.div key="success-toast" initial={{ opacity: 0, y: -20, x: "-50%" }} animate={{ opacity: 1, y: 20, x: "-50%" }} exit={{ opacity: 0, y: -20, x: "-50%" }} className="fixed top-0 left-1/2 z-[100] bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-glow shadow-emerald-500/20 flex items-center gap-3 font-bold uppercase tracking-widest text-[10px] pointer-events-none">
@@ -178,26 +178,38 @@ export default function ReservationsPage() {
                     )}
                   </div>
 
-                  <button type="submit" className="w-full bg-amber-500 text-black font-black py-5 rounded-2xl shadow-glow shadow-amber-500/20 transform hover:-translate-y-1 transition-all uppercase tracking-[0.4em] text-[11px] active:scale-95">{isEditModalOpen ? "Commit Changes" : "Broadcast To Registry"}</button>
+                  <button 
+            
+            className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
+          >
+            
+            {isEditModalOpen ? "Commit Changes" : "Broadcast To Registry"}
+          
+          </button>
                 </form>
               </motion.div>
             </div>
           )}
         </AnimatePresence>
 
-        <div className="mb-10 flex !flex-col sm:!flex-row sm:items-end justify-between gap-6 relative z-10">
-          <div>
-            <h1 className="text-2xl md:text-4xl font-outfit font-light text-white tracking-tight uppercase tracking-widest">Reservation <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 filter drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">Registry</span></h1>
-            <p className="text-white/30 mt-3 tracking-[0.2em] font-bold text-[10px] uppercase italic">Digital client scheduling node. {reservations.length} active threads recorded.</p>
-          </div>
-          <div className="flex flex-col xs:flex-row items-center gap-4 w-full sm:w-auto">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
+        <div className="space-y-1">
+          <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">
+            RESERVATION <span className="text-amber-500 font-black">REGISTRY</span>
+          </h1>
+          <p className="text-white/40 text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase opacity-70 flex items-center gap-2">
+            <span className="w-8 h-[1px] bg-amber-500/30"></span>
+            BOOKING AND CAPACITY MANAGEMENT INTERFACE.
+          </p>
+        </div>
+        <div className="flex flex-col xs:flex-row items-center gap-4 w-full sm:w-auto">
             <div className="relative group shadow-glow shadow-white/5">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-400 transition-colors" />
               <input type="text" placeholder="Search guests..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-black/40 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs w-full sm:w-64 text-white focus:outline-none focus:border-amber-500/50 transition-all uppercase tracking-tighter" />
             </div>
             <button onClick={() => { setSelectedRes(null); setIsAddModalOpen(true); }} className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-black px-8 py-3 rounded-xl font-black tracking-[0.3em] text-[10px] transition-all shadow-glow shadow-amber-500/20 transform hover:-translate-y-0.5 uppercase active:scale-95"><Plus className="w-4 h-4" /><span>New Booking</span></button>
-          </div>
         </div>
+      </div>
 
         <div className="glass-card shadow-2xl border-white/5 overflow-hidden transition-all relative z-10">
           <div className="overflow-x-auto custom-scrollbar min-h-[500px]">
