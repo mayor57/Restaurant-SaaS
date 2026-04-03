@@ -178,7 +178,7 @@ export default function MenuPage() {
           )}
         </AnimatePresence>
 
-        <div className="mb-14 lg:mb-20 flex items-end justify-between relative z-10">
+        <div className="mb-14 lg:mb-20 flex items-end justify-between relative z-50">
           <div>
             <h1 className="text-2xl md:text-4xl font-outfit font-light text-white tracking-tight uppercase tracking-[0.1em]">Menu <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 filter drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">Library</span></h1>
             <p className="text-white/30 mt-3 tracking-[0.2em] font-bold text-[10px] uppercase italic">"Culinary precision meets digital orchestration." {menu.length} total entries.</p>
@@ -186,11 +186,11 @@ export default function MenuPage() {
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
             <div className="relative group shadow-glow shadow-white/5"><Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-400 transition-colors" /><input type="text" placeholder="Search menu..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-black/60 border border-white/5 rounded-xl pl-11 pr-4 py-3 text-xs w-64 text-white focus:outline-none focus:border-amber-500/50 transition-all uppercase tracking-tighter" /></div>
             <div className="relative">
-              <button className="flex items-center justify-between gap-4 bg-black/60 border border-white/5 hover:border-amber-500/30 text-white px-5 py-3 rounded-xl transition-all min-w-[140px]">
+              <button onClick={() => setIsFilterOpen(!isFilterOpen)} className="flex items-center justify-between gap-4 bg-black/60 border border-white/5 hover:border-amber-500/30 text-white px-5 py-3 rounded-xl transition-all min-w-[140px]">
                 <span className="text-[10px] font-bold uppercase tracking-widest">{filterCategory}</span>
                 <ListFilter className="w-3.5 h-3.5 text-white/20" />
               </button>
-              <div className="absolute top-full right-0 mt-2 w-44 glass-card bg-[#0A0A0A] border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-[60] p-2 shadow-2xl">{["all", "Starters", "Mains", "Beverages", "Desserts"].map(c => (<button key={c} onClick={() => { setFilterCategory(c); setIsFilterOpen(false); }} className="w-full text-left px-4 py-2.5 text-[9px] uppercase font-bold tracking-widest text-white/30 hover:text-white hover:bg-white/5 rounded-lg transition-colors">{c}</button>))}</div>
+              <div className={`absolute top-full right-0 mt-2 w-44 glass-card bg-[#0A0A0A] border-white/10 transition-all z-[100] p-2 shadow-2xl ${isFilterOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}>{["all", "Starters", "Mains", "Beverages", "Desserts"].map(c => (<button key={c} onClick={() => { setFilterCategory(c); setIsFilterOpen(false); }} className="w-full text-left px-4 py-2.5 text-[9px] uppercase font-bold tracking-widest text-white/30 hover:text-white hover:bg-white/5 rounded-lg transition-colors">{c}</button>))}</div>
             </div>
             <button onClick={() => setIsAddModalOpen(true)} className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-black px-8 py-3 rounded-xl font-extrabold uppercase tracking-[0.2em] text-[10px] transition-all shadow-glow shadow-amber-500/20 active:scale-95"><Plus className="w-4 h-4" /><span>Manifest Asset</span></button>
           </div>
