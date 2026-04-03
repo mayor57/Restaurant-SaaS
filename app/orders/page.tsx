@@ -15,6 +15,7 @@ const statusConfig = {
 };
 
 export default function OrdersPage() {
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [orders, setOrders] = useState<any[]>([]);
   const [menuItems, setMenuItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -219,7 +220,7 @@ export default function OrdersPage() {
           )}
         </AnimatePresence>
 
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12 relative z-10">
+        <div className="relative z-50 flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12 relative z-10">
           <div className="space-y-1">
             <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">
               ORDER <span className="text-amber-500 font-black">REGISTRY</span>
@@ -235,14 +236,14 @@ export default function OrdersPage() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-400 transition-colors" />
               <input type="text" placeholder="Search ID or Table..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="w-full pl-12 pr-4 py-4 bg-white/[0.03] border border-white/10 rounded-2xl focus:outline-none focus:ring-2 focus:ring-amber-500/50 transition-all uppercase tracking-wider text-xs font-bold text-white sm:w-64" />
             </div>
-            <div className="relative group">
-              <button className="flex items-center gap-2 bg-black/40 border border-white/10 hover:border-white/20 text-white px-4 py-4 rounded-2xl transition-all hover:bg-white/5 h-full min-h-[56px]">
+            <div className="relative">
+              <button onClick={() => setIsFilterOpen(!isFilterOpen)} className="flex items-center gap-2 bg-black/40 border border-white/10 hover:border-white/20 text-white px-4 py-4 rounded-2xl transition-all hover:bg-white/5 h-full min-h-[56px]">
                 <Filter className="w-4 h-4 text-white/60" />
                 <span className="text-[10px] font-bold uppercase tracking-[0.2em]">{filterStatus}</span>
               </button>
-              <div className="absolute top-full right-0 mt-2 w-40 glass-card bg-[#0A0A0A] border-white/10 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 p-2 shadow-2xl rounded-2xl">
+              <div className={`absolute top-full right-0 mt-2 w-40 glass-card bg-[#0A0A0A] border-white/10 transition-all z-50 p-2 shadow-2xl rounded-2xl ${isFilterOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}>
                 {["all", "pending", "preparing", "ready", "served", "cancelled"].map(s => (
-                  <button key={s} onClick={() => setFilterStatus(s)} className="w-full text-left px-4 py-2 text-[10px] uppercase font-bold text-white/30 hover:text-white hover:bg-white/5 rounded-lg tracking-widest">{s}</button>
+                  <button key={s} onClick={() => { setFilterStatus(s); setIsFilterOpen(false); }} className="w-full text-left px-4 py-2 text-[10px] uppercase font-bold text-white/30 hover:text-white hover:bg-white/5 rounded-lg tracking-widest">{s}</button>
                 ))}
               </div>
             </div>
