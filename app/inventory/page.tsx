@@ -209,7 +209,7 @@ export default function InventoryPage() {
 
         <div className="glass-card shadow-2xl border-white/5 overflow-hidden transition-all relative z-10">
           <div className="overflow-x-auto custom-scrollbar min-h-[500px]">
-            <table className="w-full text-left border-collapse min-w-[1000px]">
+            <table className="w-full text-left border-collapse w-full lg:min-w-[1000px]">
               <thead>
                 <tr className="border-b border-white/5 bg-black/40">
                   <th className="px-8 py-5 text-[10px] font-bold text-white/20 uppercase tracking-widest">Global Asset ID</th>
@@ -225,21 +225,21 @@ export default function InventoryPage() {
                   <tr><td colSpan={6} className="px-8 py-40 text-center"><RefreshCw className="w-10 h-10 text-amber-500/30 animate-spin mx-auto" /></td></tr>
                 ) : filteredInventory.length > 0 ? filteredInventory.map((item, i) => (
                   <motion.tr key={item.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.04 }} className="border-b border-white/[0.02] hover:bg-white/[0.03] transition-colors group">
-                    <td className="px-8 py-6 whitespace-nowrap font-mono text-[10px] font-bold text-white/20 uppercase tracking-widest">NODE_{item.display_id || "UNSET"}</td>
+                    <td className="px-8 py-6 whitespace-normal sm:whitespace-nowrap font-mono text-[10px] font-bold text-white/20 uppercase tracking-widest">NODE_{item.display_id || "UNSET"}</td>
                     <td className="px-8 py-6">
                       <div className="text-sm font-black text-white group-hover:text-amber-400 transition-colors uppercase tracking-tight leading-none mb-1">{item.name}</div>
                       <div className="text-[10px] text-white/20 font-bold uppercase tracking-widest italic">{item.category || "GENERAL_ASSET"}</div>
                     </td>
-                    <td className="px-8 py-6 whitespace-nowrap">
+                    <td className="px-8 py-6 whitespace-normal sm:whitespace-nowrap">
                       <div className="text-sm font-black text-white tracking-widest">{item.qty} <span className="text-white/20 text-[10px] font-bold uppercase">{item.unit}</span></div>
                     </td>
-                    <td className="px-8 py-6 whitespace-nowrap">
+                    <td className="px-8 py-6 whitespace-normal sm:whitespace-nowrap">
                        <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] border ${item.status === "critical" ? "bg-red-500/10 text-red-500 border-red-500/20" : item.status === "low" ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : "bg-white/5 text-white/20 border-white/10 shadow-inner"}`}>
                         <div className={`w-1.5 h-1.5 rounded-full ${item.status === "critical" ? "bg-red-500 shadow-glow shadow-red-500/50 animate-pulse" : item.status === "low" ? "bg-amber-500 shadow-glow" : "bg-white/30"}`} />
                         {item.status}
                       </div>
                     </td>
-                    <td className="px-8 py-6 whitespace-nowrap text-[10px] text-white/40 font-black uppercase tracking-tighter italic">{item.supplier || "SOURCE_UNKNOWN"}</td>
+                    <td className="px-8 py-6 whitespace-normal sm:whitespace-nowrap text-[10px] text-white/40 font-black uppercase tracking-tighter italic">{item.supplier || "SOURCE_UNKNOWN"}</td>
                     <td className="px-8 py-6 text-right pr-12 relative">
                       <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
                         <button onClick={() => { setSelectedItem(item); setIsEditModalOpen(true); }} className="p-2.5 rounded-xl bg-white/5 hover:bg-amber-500/20 text-white/20 hover:text-amber-500 border border-white/5 hover:border-amber-500/30 transition-all active:scale-90" title="Modify Parameters"><Edit3 className="w-5 h-5" /></button>

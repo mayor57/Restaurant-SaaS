@@ -255,7 +255,7 @@ export default function OrdersPage() {
 
         <div className="glass-card overflow-hidden relative z-10 border-white/5 shadow-2xl">
           <div className="overflow-x-auto custom-scrollbar min-h-[450px]">
-            <table className="w-full text-left border-collapse min-w-[800px]">
+            <table className="w-full text-left border-collapse w-full lg:min-w-[800px]">
               <thead>
                 <tr className="border-b border-white/5 bg-black/40">
                   <th className="hidden md:table-cell px-6 py-4 text-[10px] font-bold text-white/20 uppercase tracking-widest">Protocol ID</th>
@@ -275,17 +275,17 @@ export default function OrdersPage() {
                   const StatusIcon = colors.icon;
                   return (
                     <motion.tr key={order.id} initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="border-b border-white/[0.02] hover:bg-white/[0.03] transition-colors group">
-                      <td className="px-6 py-5 whitespace-nowrap font-mono text-xs font-bold text-white group-hover:text-amber-400 transition-colors uppercase tracking-widest hidden md:table-cell">{order.order_number}</td>
-                      <td className="px-6 py-5 whitespace-nowrap text-xs text-white/50 font-bold uppercase tracking-tighter">{order.table_label}</td>
-                      <td className="px-6 py-5 whitespace-nowrap text-[10px] font-mono text-white/30 uppercase hidden xl:table-cell">{new Date(order.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td>
-                      <td className="px-6 py-5 whitespace-nowrap">
+                      <td className="px-6 py-5 whitespace-normal sm:whitespace-nowrap font-mono text-xs font-bold text-white group-hover:text-amber-400 transition-colors uppercase tracking-widest hidden md:table-cell">{order.order_number}</td>
+                      <td className="px-6 py-5 whitespace-normal sm:whitespace-nowrap text-xs text-white/50 font-bold uppercase tracking-tighter">{order.table_label}</td>
+                      <td className="px-6 py-5 whitespace-normal sm:whitespace-nowrap text-[10px] font-mono text-white/30 uppercase hidden xl:table-cell">{new Date(order.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</td>
+                      <td className="px-6 py-5 whitespace-normal sm:whitespace-nowrap">
                         <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-[9px] font-bold border ${colors.bg} ${colors.color} ${colors.border} uppercase tracking-[0.2em] shadow-inner`}>
                           <StatusIcon className="w-3 h-3" /> {order.status}
                         </div>
                       </td>
-                      <td className="px-6 py-5 whitespace-nowrap text-[10px] text-white/40 uppercase tracking-widest font-bold hidden sm:table-cell">{order.item_count || 0} Assets</td>
-                      <td className="px-6 py-5 whitespace-nowrap text-sm font-black text-white tracking-widest shadow-glow shadow-white/5 hidden lg:table-cell">${(order.total_amount || 0).toLocaleString()} <span className="text-[9px] opacity-10 font-bold">CREDITS</span></td>
-                      <td className="px-6 py-5 whitespace-nowrap text-right pr-8 relative">
+                      <td className="px-6 py-5 whitespace-normal sm:whitespace-nowrap text-[10px] text-white/40 uppercase tracking-widest font-bold hidden sm:table-cell">{order.item_count || 0} Assets</td>
+                      <td className="px-6 py-5 whitespace-normal sm:whitespace-nowrap text-sm font-black text-white tracking-widest shadow-glow shadow-white/5 hidden lg:table-cell">${(order.total_amount || 0).toLocaleString()} <span className="text-[9px] opacity-10 font-bold">CREDITS</span></td>
+                      <td className="px-6 py-5 whitespace-normal sm:whitespace-nowrap text-right pr-8 relative">
                         <button onClick={(e) => { e.stopPropagation(); setActiveActionMenu(activeActionMenu === order.id ? null : order.id); }} className="text-white/20 hover:text-white p-2 hover:bg-white/10 rounded-lg transition-colors"><MoreHorizontal className="w-5 h-5 transition-transform group-hover:scale-110" /></button>
                         <AnimatePresence>
                           {activeActionMenu === order.id && (

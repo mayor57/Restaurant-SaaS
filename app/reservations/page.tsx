@@ -213,7 +213,7 @@ export default function ReservationsPage() {
 
         <div className="glass-card shadow-2xl border-white/5 overflow-hidden transition-all relative z-10">
           <div className="overflow-x-auto custom-scrollbar min-h-[500px]">
-            <table className="w-full text-left border-collapse min-w-[1000px]">
+            <table className="w-full text-left border-collapse w-full lg:min-w-[1000px]">
               <thead>
                 <tr className="border-b border-white/5 bg-black/40">
                   <th className="px-8 py-5 text-[10px] font-bold text-white/20 uppercase tracking-widest">Guest Detail</th>
