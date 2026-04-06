@@ -335,20 +335,7 @@ export async function toggleOrderItemDone(itemId: string, isDone: boolean) {
 }
 
 // TABLES
-let inMemoryTables = [
-  { id: "1", display_id: "T-01", seats: 2, status: "occupied", time: "45m", zone: "Main Dining" },
-  { id: "2", display_id: "T-02", seats: 4, status: "free", time: null, zone: "Main Dining" },
-  { id: "3", display_id: "T-03", seats: 2, status: "reserved", time: "19:00", zone: "Terrace" },
-  { id: "4", display_id: "T-04", seats: 6, status: "occupied", time: "12m", zone: "Main Dining" },
-  { id: "5", display_id: "T-05", seats: 4, status: "free", time: null, zone: "Terrace" },
-  { id: "6", display_id: "T-06", seats: 2, status: "occupied", time: "28m", zone: "Bar Area" },
-  { id: "7", display_id: "T-07", seats: 4, status: "free", time: null, zone: "Bar Area" },
-  { id: "8", display_id: "T-08", seats: 2, status: "reserved", time: "20:30", zone: "Terrace" },
-  { id: "9", display_id: "T-09", seats: 4, status: "occupied", time: "5m", zone: "Main Dining" },
-  { id: "10", display_id: "T-10", seats: 2, status: "free", time: null, zone: "Bar Area" },
-  { id: "11", display_id: "T-11", seats: 4, status: "free", time: null, zone: "Main Dining" },
-  { id: "12", display_id: "T-12", seats: 6, status: "occupied", time: "52m", zone: "Main Dining" }
-];
+let inMemoryTables: any[] = [];
 
 export async function getTables() {
   return [...inMemoryTables];
@@ -472,4 +459,5 @@ export async function getTodayRevenue() {
   const total = (data ?? []).reduce((acc, order) => acc + (Number(order.total_amount) || 0), 0);
   return total;
 }
+
 
