@@ -90,12 +90,13 @@ export async function addMenuItem(item: { name: string; price: number; category:
   const supabase = createClient();
   const display_id = `MN-${Math.floor(Math.random() * 900) + 100}`;
   const { data, error } = await supabase
-    .from('menu_items')
-    .insert({ ...item, restaurant_id: RID, display_id, status: 'active' })
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
+    .from('menu_items').insert({ ...item, restaurant_id: RID, display_id, status: 'active' }).select();
+
+  if (error) {
+    if (error.code === '42501') throw new Error('PERMISSION DENIED (RLS): Your database is blocking this action. Please follow the instructions in the Implementation Plan to run the SQL fix.');
+    throw error;
+  }
+  return data && data.length > 0 ? data[0] : null;
 }
 
 export async function updateMenuItem(id: string, updates: { name?: string; price?: number; category?: string; description?: string; }) {
@@ -132,12 +133,13 @@ export async function addInventoryItem(item: { name: string; qty: number; unit: 
   const display_id = `INV-${Math.floor(Math.random() * 900) + 100}`;
   const supabase = createClient();
   const { data, error } = await supabase
-    .from('inventory')
-    .insert({ ...item, restaurant_id: RID, display_id, status })
-    .select()
-    .single();
-  if (error) throw error;
-  return data;
+    .from('inventory').insert({ ...item, restaurant_id: RID, display_id, status }).select();
+
+  if (error) {
+    if (error.code === '42501') throw new Error('PERMISSION DENIED (RLS): Your database is blocking this action. Please follow the instructions in the Implementation Plan to run the SQL fix.');
+    throw error;
+  }
+  return data && data.length > 0 ? data[0] : null;
 }
 
 export async function updateInventoryItem(id: string, updates: Partial<{ name: string; qty: number; unit: string; min_stock: number; supplier: string; category: string; }>) {
@@ -207,10 +209,13 @@ export async function addStaffMember(member: { name: string; role: string; phone
   };
   const { data, error } = await supabase
     .from('staff')
-    .insert(payload)
-    .select().single();
-  if (error) throw error;
-  return data;
+    .insert(payload).select();
+
+  if (error) {
+    if (error.code === '42501') throw new Error('PERMISSION DENIED (RLS): Your database is blocking this action. Please follow the instructions in the Implementation Plan to run the SQL fix.');
+    throw error;
+  }
+  return data && data.length > 0 ? data[0] : null;
 }
 
 export async function updateStaffMember(id: string, updates: Partial<{ name: string; role: string; phone: string; status: string; avatar_url: string; }>) {
@@ -358,9 +363,16 @@ export async function addTable(table: { display_id: string; seats: number; zone:
   const { data, error } = await supabase
     .from('tables')
     .insert({ ...table, restaurant_id: RID, status: 'free' })
-    .select().single();
-  if (error) throw error;
-  return data;
+    .select();
+    
+  if (error) {
+    console.error('Supabase Add Table Error:', error);
+    if (error.code === '42501') {
+      throw new Error('PERMISSION DENIED (RLS): Your database is blocking this action. Please follow the instructions in the Implementation Plan to run the SQL fix.');
+    }
+    throw error;
+  }
+  return data && data.length > 0 ? data[0] : null;
 }
 
 export async function deleteTable(id: string) {
@@ -401,11 +413,13 @@ export async function getReservations(date?: string) {
 export async function createReservation(res: { customer_name: string; party_size: number; reservation_date: string; reservation_time: string; table_id?: string; phone?: string; email?: string; notes?: string; status?: string; }) {
   const supabase = createClient();
   const { data, error } = await supabase
-    .from('reservations')
-    .insert({ ...res, restaurant_id: RID })
-    .select().single();
-  if (error) throw error;
-  return data;
+    .from('reservations').insert({ ...res, restaurant_id: RID }).select();
+
+  if (error) {
+    if (error.code === '42501') throw new Error('PERMISSION DENIED (RLS): Your database is blocking this action. Please follow the instructions in the Implementation Plan to run the SQL fix.');
+    throw error;
+  }
+  return data && data.length > 0 ? data[0] : null;
 }
 
 export async function updateReservation(id: string, updates: Partial<{ customer_name: string; party_size: number; reservation_date: string; reservation_time: string; table_id: string; phone: string; email: string; notes: string; status: string; }>) {
@@ -475,4 +489,7 @@ export async function getTodayRevenue() {
   const total = (data ?? []).reduce((acc, order) => acc + (Number(order.total_amount) || 0), 0);
   return total;
 }
+
+
+
 
