@@ -37,15 +37,8 @@ export async function getLiveOrders() {
 }
 
 export async function getTableStatus() {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from('tables')
-    .select('id, display_id, seats, status, time, zone')
-    .eq('restaurant_id', RID)
-    .order('display_id');
-  if (error) throw error;
-
-  return (data ?? []).map(t => ({
+  const tables = await getTables();
+  return tables.map(t => ({
     id: t.display_id,
     seats: t.seats,
     status: t.status,
@@ -479,3 +472,4 @@ export async function getTodayRevenue() {
   const total = (data ?? []).reduce((acc, order) => acc + (Number(order.total_amount) || 0), 0);
   return total;
 }
+
