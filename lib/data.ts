@@ -37,13 +37,20 @@ export async function getLiveOrders() {
 }
 
 export async function getTableStatus() {
-  const tables = await getTables();
-  return tables.map(t => ({
-    id: t.display_id,
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('tables')
+    .select('id, display_id, seats, status, time, zone')
+    .eq('restaurant_id', RID)
+    .order('display_id');
+  if (error) throw error;
+
+  return (data ?? []).map(t => ({
+    id: t.id,
+    display_id: t.display_id,
     seats: t.seats,
     status: t.status,
     time: t.time,
-    _uuid: t.id,
     zone: t.zone,
   }));
 }
@@ -335,67 +342,87 @@ export async function toggleOrderItemDone(itemId: string, isDone: boolean) {
 }
 
 // TABLES
-let inMemoryTables: any[] = [];
-
 export async function getTables() {
-  return [...inMemoryTables];
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('tables')
+    .select('*')
+    .eq('restaurant_id', RID)
+    .order('display_id');
+  if (error) throw error;
+  return data ?? [];
 }
 
 export async function addTable(table: { display_id: string; seats: number; zone: string; }) {
-  const newTable = {
-    id: Math.random().toString(36).substr(2, 9),
-    display_id: table.display_id,
-    seats: table.seats,
-    zone: table.zone,
-    status: 'free',
-    time: null
-  };
-  inMemoryTables.push(newTable as any);
-  return newTable;
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('tables')
+    .insert({ ...table, restaurant_id: RID, status: 'free' })
+    .select().single();
+  if (error) throw error;
+  return data;
 }
 
 export async function deleteTable(id: string) {
-  inMemoryTables = inMemoryTables.filter(t => t.id !== id);
+  const supabase = createClient();
+  const { error } = await supabase
+    .from('tables').delete().eq('id', id).eq('restaurant_id', RID);
+  if (error) throw error;
 }
 
 export async function updateTableStatus(id: string, status: string, time?: string) {
-  inMemoryTables = inMemoryTables.map(t => t.id === id ? { ...t, status, time: time ?? t.time } : t);
+  const supabase = createClient();
+  const { error } = await supabase
+    .from('tables')
+    .update({ status, time: time ?? null })
+    .eq('id', id).eq('restaurant_id', RID);
+  if (error) throw error;
 }
-
 
 // RESERVATIONS
-let inMemoryReservations: any[] = [];
-
 export async function getReservations(date?: string) {
-  let res = [...inMemoryReservations];
+  const supabase = createClient();
+  let query = supabase
+    .from('reservations')
+    .select('*, tables(display_id, seats)')
+    .eq('restaurant_id', RID)
+    .order('reservation_date', { ascending: true })
+    .order('reservation_time', { ascending: true });
+
   if (date) {
-    res = res.filter(r => r.reservation_date === date);
+    query = query.eq('reservation_date', date);
   }
-  return res.sort((a, b) => {
-    if (a.reservation_date !== b.reservation_date) {
-        return a.reservation_date.localeCompare(b.reservation_date);
-    }
-    return a.reservation_time.localeCompare(b.reservation_time);
-  });
+
+  const { data, error } = await query;
+  if (error) throw error;
+  return data ?? [];
 }
 
-export async function createReservation(res: any) {
-  const tableData = inMemoryTables.find(t => t.id === res.table_id) || { display_id: "T-01", seats: res.party_size };
-  const newRes = {
-    ...res,
-    id: Math.random().toString(36).substr(2, 9),
-    tables: { display_id: tableData.display_id, seats: tableData.seats }
-  };
-  inMemoryReservations.push(newRes);
-  return newRes;
+export async function createReservation(res: { customer_name: string; party_size: number; reservation_date: string; reservation_time: string; table_id?: string; phone?: string; email?: string; notes?: string; status?: string; }) {
+  const supabase = createClient();
+  const { data, error } = await supabase
+    .from('reservations')
+    .insert({ ...res, restaurant_id: RID })
+    .select().single();
+  if (error) throw error;
+  return data;
 }
 
-export async function updateReservation(id: string, updates: any) {
-  inMemoryReservations = inMemoryReservations.map(r => r.id === id ? { ...r, ...updates } : r);
+export async function updateReservation(id: string, updates: Partial<{ customer_name: string; party_size: number; reservation_date: string; reservation_time: string; table_id: string; phone: string; email: string; notes: string; status: string; }>) {
+  const supabase = createClient();
+  const { error } = await supabase
+    .from('reservations')
+    .update({ ...updates })
+    .eq('id', id)
+    .eq('restaurant_id', RID);
+  if (error) throw error;
 }
 
 export async function deleteReservation(id: string) {
-  inMemoryReservations = inMemoryReservations.filter(r => r.id !== id);
+  const supabase = createClient();
+  const { error } = await supabase
+    .from('reservations').delete().eq('id', id).eq('restaurant_id', RID);
+  if (error) throw error;
 }
 
 // REPORTS & OTHERS
@@ -448,6 +475,4 @@ export async function getTodayRevenue() {
   const total = (data ?? []).reduce((acc, order) => acc + (Number(order.total_amount) || 0), 0);
   return total;
 }
-
-
 

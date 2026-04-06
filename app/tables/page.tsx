@@ -217,7 +217,7 @@ export default function TablesPage() {
                 {loading && tables.length === 0 ? (
                   <div className="flex flex-col items-center justify-center p-32 animate-pulse gap-6"><LayoutGrid size={64} className="text-amber-500/20" /><p className="text-white/20 uppercase tracking-[0.5em] font-bold text-[10px]">Neural Map Hydrating...</p></div>
                 ) : (
-                  <FloorMap initialTables={tables.map(t => ({ ...t, id: t.display_id }))} onTableClick={handleTableClick} />
+                  <FloorMap initialTables={tables} onTableClick={handleTableClick} />
                 )}
               </div>
             )}
@@ -227,3 +227,4 @@ export default function TablesPage() {
     </>
   );
 }
+

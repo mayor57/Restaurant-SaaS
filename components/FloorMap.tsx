@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 
 interface Table {
   id: string;
+  display_id: string;
   seats: number;
   status: string;
   time?: string | null;
@@ -52,7 +53,7 @@ export default function FloorMap({ initialTables, onTableClick }: FloorMapProps)
             >
               {table.status === "occupied" && <div className="absolute inset-0 bg-amber-500/5 animate-pulse rounded-xl" />}
               
-              <span className="text-xl font-bold tracking-widest text-white/90 group-hover:text-amber-400 transition-colors">{table.id}</span>
+              <span className="text-xl font-bold tracking-widest text-white/90 group-hover:text-amber-400 transition-colors">{table.display_id}</span>
               <span className="text-[10px] text-white/40 mt-1 uppercase tracking-wider font-bold">Seats {table.seats}</span>
               
               {(table.status === "occupied" || table.status === "reserved") && (
@@ -74,3 +75,4 @@ export default function FloorMap({ initialTables, onTableClick }: FloorMapProps)
     </motion.div>
   );
 }
+
