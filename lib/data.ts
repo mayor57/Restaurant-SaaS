@@ -320,6 +320,15 @@ export async function createOrder(order: {
     if (itemsError) throw itemsError;
   }
 
+
+  // Sync Table Status to 'occupied' when order is created
+  if (order.table_label) {
+    await supabase.from('tables')
+      .update({ status: 'occupied' })
+      .eq('display_id', order.table_label)
+      .eq('restaurant_id', RID);
+  }
+
   return mainData;
 }
 
