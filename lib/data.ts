@@ -96,6 +96,11 @@ export async function addMenuItem(item: { name: string; price: number; category:
     if (error.code === '42501') throw new Error('PERMISSION DENIED (RLS): Your database is blocking this action. Please follow the instructions in the Implementation Plan to run the SQL fix.');
     throw error;
   }
+
+  // Sync table status
+  if (res.table_id) {
+    await supabase.from('tables').update({ status: 'reserved' }).eq('id', res.table_id).eq('restaurant_id', RID);
+  }
   return data && data.length > 0 ? data[0] : null;
 }
 
@@ -428,6 +433,15 @@ export async function createReservation(res: { customer_name: string; party_size
     if (error.code === '42501') throw new Error('PERMISSION DENIED (RLS): Your database is blocking this action. Please follow the instructions in the Implementation Plan to run the SQL fix.');
     throw error;
   }
+
+  // Sync Table Status to 'reserved' when reservation is created
+  if (res.table_id) {
+    await supabase.from('tables')
+      .update({ status: 'reserved' })
+      .eq('id', res.table_id)
+      .eq('restaurant_id', RID);
+  }
+
   return data && data.length > 0 ? data[0] : null;
 }
 
