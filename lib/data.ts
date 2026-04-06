@@ -364,49 +364,38 @@ export async function updateTableStatus(id: string, status: string, time?: strin
 
 
 // RESERVATIONS
+let inMemoryReservations: any[] = [];
+
 export async function getReservations(date?: string) {
-  const supabase = createClient();
-  let query = supabase
-    .from('reservations')
-    .select('*, tables(display_id, seats)')
-    .eq('restaurant_id', RID)
-    .order('reservation_date', { ascending: true })
-    .order('reservation_time', { ascending: true });
-
+  let res = [...inMemoryReservations];
   if (date) {
-    query = query.eq('reservation_date', date);
+    res = res.filter(r => r.reservation_date === date);
   }
-
-  const { data, error } = await query;
-  if (error) throw error;
-  return data ?? [];
+  return res.sort((a, b) => {
+    if (a.reservation_date !== b.reservation_date) {
+        return a.reservation_date.localeCompare(b.reservation_date);
+    }
+    return a.reservation_time.localeCompare(b.reservation_time);
+  });
 }
 
-export async function createReservation(res: { customer_name: string; party_size: number; reservation_date: string; reservation_time: string; table_id?: string; phone?: string; email?: string; notes?: string; status?: string; }) {
-  const supabase = createClient();
-  const { data, error } = await supabase
-    .from('reservations')
-    .insert({ ...res, restaurant_id: RID })
-    .select().single();
-  if (error) throw error;
-  return data;
+export async function createReservation(res: any) {
+  const tableData = inMemoryTables.find(t => t.id === res.table_id) || { display_id: "T-01", seats: res.party_size };
+  const newRes = {
+    ...res,
+    id: Math.random().toString(36).substr(2, 9),
+    tables: { display_id: tableData.display_id, seats: tableData.seats }
+  };
+  inMemoryReservations.push(newRes);
+  return newRes;
 }
 
-export async function updateReservation(id: string, updates: Partial<{ customer_name: string; party_size: number; reservation_date: string; reservation_time: string; table_id: string; phone: string; email: string; notes: string; status: string; }>) {
-  const supabase = createClient();
-  const { error } = await supabase
-    .from('reservations')
-    .update({ ...updates })
-    .eq('id', id)
-    .eq('restaurant_id', RID);
-  if (error) throw error;
+export async function updateReservation(id: string, updates: any) {
+  inMemoryReservations = inMemoryReservations.map(r => r.id === id ? { ...r, ...updates } : r);
 }
 
 export async function deleteReservation(id: string) {
-  const supabase = createClient();
-  const { error } = await supabase
-    .from('reservations').delete().eq('id', id).eq('restaurant_id', RID);
-  if (error) throw error;
+  inMemoryReservations = inMemoryReservations.filter(r => r.id !== id);
 }
 
 // REPORTS & OTHERS
@@ -459,5 +448,6 @@ export async function getTodayRevenue() {
   const total = (data ?? []).reduce((acc, order) => acc + (Number(order.total_amount) || 0), 0);
   return total;
 }
+
 
 
