@@ -113,20 +113,18 @@ export default function TablesPage() {
                   <h2 className="text-2xl font-outfit text-white">Add <span className="text-amber-500 font-bold">New Table</span></h2>
                   <button onClick={() => setIsAddModalOpen(false)} className="text-white/40 hover:text-white transition-colors"><X className="w-6 h-6" /></button>
                 </div>
-                <form onSubmit={handleAddTable} className="space-y-6">
-                  <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-widest text-white/40">Table ID / Name</label><input type="text" placeholder="e.g. T-15" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50" required /></div>
+                                <form onSubmit={handleAddTable} className="space-y-6">
+                  <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-widest text-white/40">Table ID / Name</label><input name="display_id" type="text" placeholder="e.g. T-15" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50" required /></div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-widest text-white/40">Capacity</label><input type="number" min="1" max="12" placeholder="4" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50" required /></div>
-                    <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-widest text-white/40">Floor Section</label><select className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white appearance-none focus:outline-none focus:border-amber-500/50"><option>Main Dining</option><option>Terrace</option><option>Bar Area</option></select></div>
+                    <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-widest text-white/40">Capacity</label><input name="seats" type="number" min="1" max="12" placeholder="4" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500/50" required /></div>
+                    <div className="space-y-2"><label className="text-xs font-bold uppercase tracking-widest text-white/40">Floor Section</label><select name="zone" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white appearance-none focus:outline-none focus:border-amber-500/50"><option>Main Dining</option><option>Terrace</option><option>Bar Area</option></select></div>
                   </div>
                   <button 
-            
-            className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
-          >
-            
-            Add Table to Map
-          
-          </button>
+                    type="submit"
+                    className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
+                  >
+                    Add Table to Map
+                  </button>
                 </form>
               </motion.div>
             </div>
@@ -227,4 +225,5 @@ export default function TablesPage() {
     </>
   );
 }
+
 
