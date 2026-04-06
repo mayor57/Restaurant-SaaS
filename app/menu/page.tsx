@@ -108,13 +108,13 @@ export default function MenuPage() {
           )}
 
           {isAddModalOpen && (
-            <div key="add-modal" className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div key="add-modal" className="fixed inset-0 z-[100] flex items-center justify-center p-4">
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsAddModalOpen(false)} className="absolute inset-0 bg-black/80 backdrop-blur-xl" />
               <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-xl glass-card bg-[#0A0A0A]/90 border-white/10 p-10 shadow-2xl overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
                 <div className="flex items-center justify-between mb-10 text-white">
                   <div>
-                    <h2 className="text-2xl font-outfit uppercase tracking-tighter">Manifest <span className="text-amber-500 font-bold">New Asset</span></h2>
+                    <h2 className="text-2xl font-outfit uppercase tracking-tighter">Create <span className="text-amber-500 font-bold">New Menu</span></h2>
                     <p className="text-white/20 text-[10px] uppercase font-bold tracking-[0.2em] mt-1 italic">Register new entry into the global culinary library.</p>
                   </div>
                   <button onClick={() => setIsAddModalOpen(false)} className="p-2 bg-white/5 rounded-full text-white/40 hover:text-white transition-all"><X className="w-5 h-5" /></button>
@@ -134,7 +134,7 @@ export default function MenuPage() {
             className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
           >
             
-            Broadcast to All Terminals
+            Complete Menu
           
           </button>
                 </form>
@@ -178,7 +178,7 @@ export default function MenuPage() {
           )}
         </AnimatePresence>
 
-        <div className="mb-14 lg:mb-20 flex items-end justify-between relative z-50">
+        <div className="mb-14 lg:mb-20 flex items-end justify-between relative z-10">
           <div>
             <h1 className="text-2xl md:text-4xl font-outfit font-light text-white tracking-tight uppercase tracking-[0.1em]">Menu <span className="font-semibold text-transparent bg-clip-text bg-gradient-to-r from-amber-400 to-orange-500 filter drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">Library</span></h1>
             <p className="text-white/30 mt-3 tracking-[0.2em] font-bold text-[10px] uppercase italic">"Culinary precision meets digital orchestration." {menu.length} total entries.</p>
@@ -192,7 +192,7 @@ export default function MenuPage() {
               </button>
               <div className={`absolute top-full right-0 mt-2 w-44 glass-card bg-[#0A0A0A] border-white/10 transition-all z-[100] p-2 shadow-2xl ${isFilterOpen ? "opacity-100 visible" : "opacity-0 invisible"}`}>{["all", "Starters", "Mains", "Beverages", "Desserts"].map(c => (<button key={c} onClick={() => { setFilterCategory(c); setIsFilterOpen(false); }} className="w-full text-left px-4 py-2.5 text-[9px] uppercase font-bold tracking-widest text-white/30 hover:text-white hover:bg-white/5 rounded-lg transition-colors">{c}</button>))}</div>
             </div>
-            <button onClick={() => setIsAddModalOpen(true)} className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-black px-8 py-3 rounded-xl font-extrabold uppercase tracking-[0.2em] text-[10px] transition-all shadow-glow shadow-amber-500/20 active:scale-95"><Plus className="w-4 h-4" /><span>Manifest Asset</span></button>
+            <button onClick={() => setIsAddModalOpen(true)} className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-black px-8 py-3 rounded-xl font-extrabold uppercase tracking-[0.2em] text-[10px] transition-all shadow-glow shadow-amber-500/20 active:scale-95"><Plus className="w-4 h-4" /><span>Create Menu</span></button>
           </div>
         </div>
 
