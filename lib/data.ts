@@ -97,10 +97,6 @@ export async function addMenuItem(item: { name: string; price: number; category:
     throw error;
   }
 
-  // Sync table status
-  if (res.table_id) {
-    await supabase.from('tables').update({ status: 'reserved' }).eq('id', res.table_id).eq('restaurant_id', RID);
-  }
   return data && data.length > 0 ? data[0] : null;
 }
 
