@@ -73,7 +73,7 @@ export default function ReservationsPage() {
       if (err.message.includes("PERMISSION DENIED")) {
         alert("CRITICAL PERMISSION ERROR: Your database is blocking this entry. \n\nPlease run the SQL fix in your Supabase dashboard provided in the 'Implementation Plan'.");
       } else {
-        alert(Critical DB Error: \);
+        alert(`Critical DB Error: ${err.message || "Unauthorized interaction"}`);
       }
     }
   };
@@ -273,4 +273,5 @@ export default function ReservationsPage() {
     </>
   );
 }
+
 

@@ -39,20 +39,30 @@ export default function TablesPage() {
     return () => clearInterval(interval);
   }, []);
 
-  const handleAddTable = async (e: React.FormEvent) => {
+  const handleAddTable = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const target = e.target as any;
+    const formData = new FormData(e.currentTarget);
     try {
       const newTable = await addTable({
-        display_id: target[0].value,
-        seats: parseInt(target[1].value),
-        zone: target.querySelector("select").value
+        display_id: formData.get("display_id") as string,
+        seats: parseInt(formData.get("seats") as string),
+        zone: formData.get("zone") as string
       });
+
+      if (!newTable) {
+        throw new Error("No data returned from database. Please check your Supabase connection.");
+      }
+
       setTables(prev => [...prev, newTable]);
       setIsAddModalOpen(false);
       triggerSuccess(`Table ${newTable.display_id} Registered to Digital Twin`);
-    } catch (err) {
+    } catch (err: any) {
       console.error("Add Table Error:", err);
+      if (err.message.includes("PERMISSION DENIED")) {
+        alert("CRITICAL PERMISSION ERROR: Your database is blocking this entry. \\n\\nPlease run the SQL fix in your Supabase dashboard provided in the 'Implementation Plan'.");
+      } else {
+        alert(`Critical DB Error: ${err.message || "Unknown interaction error"}`);
+      }
     }
   };
 
@@ -225,6 +235,9 @@ export default function TablesPage() {
     </>
   );
 }
+
+
+
 
 
 
