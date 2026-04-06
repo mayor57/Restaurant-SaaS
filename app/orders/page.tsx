@@ -4,7 +4,7 @@ import Topbar from "@/components/Topbar";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, Filter, MoreHorizontal, Clock, CheckCircle2, XCircle, ChefHat, Plus, CheckCircle, X, Trash2, Edit, ChevronLeft, ChevronRight, RefreshCw, Minus, ShoppingCart } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
-import { getOrders, updateOrderStatus, deleteOrder, createOrder, getMenuItems } from "@/lib/data";
+import { getOrders, updateOrderStatus, deleteOrder, createOrder, getMenuItems, getTables } from "@/lib/data";
 
 const statusConfig = {
   pending: { icon: Clock, color: "text-blue-400", bg: "bg-blue-400/10", border: "border-blue-400/20" },
@@ -18,6 +18,7 @@ export default function OrdersPage() {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [orders, setOrders] = useState<any[]>([]);
   const [menuItems, setMenuItems] = useState<any[]>([]);
+  const [tables, setTables] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [showSuccess, setShowSuccess] = useState<string | null>(null);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -34,9 +35,10 @@ export default function OrdersPage() {
   const loadOrders = async () => {
     setLoading(true);
     try {
-      const [orderData, menuData] = await Promise.all([getOrders(), getMenuItems()]);
+      const [orderData, menuData, tableData] = await Promise.all([getOrders(), getMenuItems(), getTables()]);
       setOrders(orderData);
       setMenuItems(menuData);
+      setTables(tableData);
     } catch (err) {
       console.error("Orders Load Error:", err);
     } finally {
@@ -197,7 +199,7 @@ export default function OrdersPage() {
                       <div className="space-y-4 border-t border-white/10 pt-6">
                         <div>
                           <label className="text-[9px] font-bold uppercase tracking-widest text-white/20 mb-2 block">Node Allocation (Table)</label>
-                          <input name="table" type="text" placeholder="e.g. T-04" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500/50 uppercase tracking-widest font-bold" required />
+                          <select name="table" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-amber-500/50 uppercase tracking-widest font-bold appearance-none cursor-pointer" required><option value="" className="bg-[#111]">Select Table Node</option>{tables.map(t => <option key={t.id} value={t.display_id} className="bg-[#111]">T-{t.display_id} // {t.zone}</option>)}</select>
                         </div>
                         <div className="flex justify-between items-center bg-amber-500/5 p-4 rounded-xl border border-amber-500/10 mb-6">
                             <span className="text-[10px] font-bold uppercase tracking-widest text-amber-500/60 uppercase">System total</span>

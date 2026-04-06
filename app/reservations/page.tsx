@@ -167,9 +167,9 @@ export default function ReservationsPage() {
                   <div className="grid grid-cols-2 gap-6">
                     <div className="space-y-3">
                       <label className="text-[10px] font-bold uppercase tracking-widest text-white/30 ml-1">Asset (Table)</label>
-                      <select name="table_id" defaultValue={selectedRes?.table_id || ""} className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none uppercase font-bold tracking-widest cursor-pointer">
-                        <option value="" className="bg-[#111]">Auto-Assign</option>
-                        {tables.map(t => <option key={t.id} value={t.id} className="bg-[#111]">T-{t.display_id} // {t.seats} SEATS</option>)}
+                      <select name="table_id" defaultValue={selectedRes?.table_id || ""} className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none uppercase font-bold tracking-widest cursor-pointer transition-all hover:bg-white/10">
+                        <option value="" className="bg-[#111]">PROTOCOL_AUTO_ASSIGN</option>
+                        {tables.map(t => <option key={t.id} value={t.id} className="bg-[#111]">NODE_{t.display_id} // {t.zone} // {t.seats}P</option>)}
                       </select>
                     </div>
                     {isEditModalOpen && (
