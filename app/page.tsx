@@ -7,8 +7,8 @@ import AnalyticsSection from "@/components/AnalyticsSection";
 import FloorMap from "@/components/FloorMap";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { CheckCircle, RefreshCw, BarChart3 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { CheckCircle, RefreshCw, BarChart3, Calendar, ChevronDown } from "lucide-react";
+import { useEffect, useState, useCallback } from "react";
 import { getInventoryAlerts, getLiveOrders, getTableStatus, getRevenueAnalytics, getTodayRevenue } from "@/lib/data";
 import { createClient } from "@/lib/supabase/client";
 
@@ -22,14 +22,22 @@ export default function Dashboard() {
     todayRevenue: 0
   });
   const [showSuccess, setShowSuccess] = useState<string | null>(null);
+  
+  // Date Range State
+  const [selectedRange, setSelectedRange] = useState("This Week");
+  const [isRangeOpen, setIsRangeOpen] = useState(false);
+  const [isRefreshingAnalytics, setIsRefreshingAnalytics] = useState(false);
 
-  const loadData = async () => {
+  const loadData = useCallback(async (range?: string) => {
+    const currentRange = range || selectedRange;
+    if (range) setIsRefreshingAnalytics(true);
+    
     try {
       const [inventoryAlerts, liveOrders, tableStatus, revenueData, todayRevenue] = await Promise.all([
         getInventoryAlerts(),
         getLiveOrders(),
         getTableStatus(),
-        getRevenueAnalytics(),
+        getRevenueAnalytics(currentRange),
         getTodayRevenue()
       ]);
       setData({ inventoryAlerts, liveOrders, tableStatus, revenueData, todayRevenue });
@@ -37,8 +45,9 @@ export default function Dashboard() {
       console.error("Dashboard Sync Error:", err);
     } finally {
       setLoading(false);
+      setIsRefreshingAnalytics(false);
     }
-  };
+  }, [selectedRange]);
 
   useEffect(() => {
     loadData();
@@ -70,11 +79,18 @@ export default function Dashboard() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [loadData]);
 
   const triggerSuccess = (msg: string) => {
     setShowSuccess(msg);
     setTimeout(() => setShowSuccess(null), 3000);
+  };
+
+  const changeRange = (range: string) => {
+    setSelectedRange(range);
+    setIsRangeOpen(false);
+    triggerSuccess(`Analytics Filtered: ${range}`);
+    loadData(range);
   };
 
   const occupiedCount = data.tableStatus.filter((t: any) => t.status === "occupied").length;
@@ -95,7 +111,7 @@ export default function Dashboard() {
   return (
     <>
       <Topbar />
-            <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto pb-32">
+      <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto pb-32">
         <AnimatePresence>
           {showSuccess && (
             <motion.div key="success-toast" initial={{ opacity: 0, y: -20, x: "-50%" }} animate={{ opacity: 1, y: 20, x: "-50%" }} exit={{ opacity: 0, y: -20, x: "-50%" }} className="fixed top-0 left-1/2 z-50 bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-glow shadow-emerald-500/20 flex items-center gap-3 font-bold uppercase tracking-widest text-[9px] pointer-events-none">
@@ -114,16 +130,54 @@ export default function Dashboard() {
               GLOBAL OPERATIONS OVERVIEW.
             </p>
           </div>
-          <div className="flex gap-3 w-full sm:w-auto">
+          <div className="flex items-center gap-3 w-full sm:w-auto">
+            {/* Range Selector / Calendar */}
+            <div className="relative flex-1 sm:flex-none">
+              <button 
+                onClick={() => setIsRangeOpen(!isRangeOpen)}
+                className="flex items-center justify-between gap-3 px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white/70 hover:text-white hover:border-amber-500/30 transition-all w-full min-w-[160px]"
+              >
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-amber-500" />
+                  <span className="text-[10px] font-bold uppercase tracking-widest">{selectedRange}</span>
+                </div>
+                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isRangeOpen ? "rotate-180" : ""}`} />
+              </button>
+              
+              <AnimatePresence>
+                {isRangeOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setIsRangeOpen(false)} />
+                    <motion.div 
+                      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                      className="absolute top-full right-0 mt-2 w-48 glass-card bg-[#0A0A0A] border-white/10 p-2 z-50 shadow-2xl"
+                    >
+                      {["This Week", "Last Week"].map((range) => (
+                        <button
+                          key={range}
+                          onClick={() => changeRange(range)}
+                          className={`w-full text-left px-4 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${selectedRange === range ? "bg-amber-500 text-black" : "text-white/40 hover:text-white hover:bg-white/5"}`}
+                        >
+                          {range}
+                        </button>
+                      ))}
+                    </motion.div>
+                  </>
+                )}
+              </AnimatePresence>
+            </div>
+
             <button 
               onClick={() => { triggerSuccess("Global Sync Initiated"); loadData(); }}
-              className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/5 transition-all text-white/40 hover:text-white flex-1 sm:flex-none flex items-center justify-center"
+              className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-white/40 hover:text-white flex items-center justify-center h-[58px] w-[58px]"
             >
-              <RefreshCw className="w-5 h-5" />
+              <RefreshCw className={`w-5 h-5 ${isRefreshingAnalytics ? "animate-spin" : ""}`} />
             </button>
             <Link href="/orders" className="flex-1 sm:flex-none">
               <button 
-                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full"
+                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 h-[58px] min-w-[140px]"
               >
                 Live View
               </button>
@@ -174,7 +228,7 @@ export default function Dashboard() {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 lg:h-[450px] relative z-10">
           <div className="lg:col-span-8 h-[350px] lg:h-full">
-            <AnalyticsSection initialData={data.revenueData} />
+            <AnalyticsSection initialData={data.revenueData} isLoading={isRefreshingAnalytics} rangeLabel={selectedRange} />
           </div>
           <div className="lg:col-span-4 lg:h-full">
             <div className="glass-card flex flex-col h-full bg-[#0A0A0A]/40 p-6 lg:p-8 border-white/5 relative overflow-hidden">
@@ -200,15 +254,10 @@ export default function Dashboard() {
                           </div>
                         </div>
                         <button 
-            
-            className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
-          >
-            
-            
+                         className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
+                        >
                           {alert.action || "Fix"}
-                        
-          
-          </button>
+                        </button>
                       </motion.div>
                     ))
                  ) : (
