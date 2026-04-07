@@ -5,28 +5,59 @@ const RID = process.env.NEXT_PUBLIC_RESTAURANT_ID!;
 // DASHBOARD
 export async function getRevenueAnalytics(range: string = "This Week") {
   const supabase = createClient();
-  const { data, error } = await supabase
-    .from('revenue_snapshots')
-    .select('day, total')
-    .eq('restaurant_id', RID)
-    .order('snapshot_date', { ascending: true })
-    .limit(7);
+  const RID = process.env.NEXT_PUBLIC_RESTAURANT_ID!;
+  
+  // 1. Determine Date Range
+  const now = new Date();
+  const dayOfWeek = (now.getDay() + 6) % 7; // 0 is Mon, 6 is Sun
+  
+  const startOfThisWeek = new Date(now);
+  startOfThisWeek.setDate(now.getDate() - dayOfWeek);
+  startOfThisWeek.setHours(0, 0, 0, 0);
 
-  // Return high-fidelity mock data if no data found, or for simulation consistency
-  // This ensures the dashboard always looks "cinematic" and "functional"
-  if (error || !data || data.length === 0) {
-    const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-    const baseMultiplier = range === "Last Week" ? 0.85 : 1.0;
-    const seed = range === "Last Week" ? 123 : 456; // Consistent random-ish data
-    
-    return days.map((day, i) => {
-      // Create a stable but realistic looking curve
-      const variance = Math.sin((i + seed) * 0.5) * 500;
-      const total = Math.floor((4200 + (i * 300) + variance) * baseMultiplier);
-      return { day, total };
-    });
+  let startDate: Date;
+  let endDate: Date;
+
+  if (range === "Last Week") {
+    startDate = new Date(startOfThisWeek);
+    startDate.setDate(startOfThisWeek.getDate() - 7);
+    endDate = new Date(startOfThisWeek);
+  } else {
+    startDate = new Date(startOfThisWeek);
+    endDate = new Date(now);
+    endDate.setDate(endDate.getDate() + 1); // Up to start of next day
+    endDate.setHours(0, 0, 0, 0);
   }
-  return data ?? [];
+
+  // 2. Fetch Real Orders
+  const { data: orders, error } = await supabase
+    .from('orders')
+    .select('total_amount, created_at')
+    .eq('restaurant_id', RID)
+    .gte('created_at', startDate.toISOString())
+    .lt('created_at', endDate.toISOString())
+    .neq('status', 'cancelled');
+
+  if (error) throw error;
+
+  // 3. Aggregate Data by Day
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const revenueMap: Record<string, number> = {};
+  days.forEach(day => revenueMap[day] = 0);
+
+  orders?.forEach(order => {
+    const date = new Date(order.created_at);
+    // getDay() is 0 (Sun) to 6 (Sat)
+    // We want to map it to Mon-Sun
+    const d = (date.getDay() + 6) % 7;
+    const dayName = days[d];
+    revenueMap[dayName] += Number(order.total_amount) || 0;
+  });
+
+  return days.map(day => ({
+    day,
+    total: Math.floor(revenueMap[day])
+  }));
 }
 
 export async function getLiveOrders() {
