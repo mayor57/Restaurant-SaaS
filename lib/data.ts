@@ -335,6 +335,14 @@ export async function createOrder(order: {
 
 export async function updateOrderStatus(id: string, status: string) {
   const supabase = createClient();
+
+  if (status === 'served') {
+    const { data: ord } = await supabase.from('orders').select('table_label').eq('id', id).single();
+    if (ord?.table_label) {
+      await supabase.from('tables').update({ status: 'free' }).eq('display_id', ord.table_label).eq('restaurant_id', RID);
+    }
+  }
+
   const { error } = await supabase
     .from('orders')
     .update({ status })
@@ -344,6 +352,12 @@ export async function updateOrderStatus(id: string, status: string) {
 
 export async function deleteOrder(id: string) {
   const supabase = createClient();
+
+  const { data: ord } = await supabase.from('orders').select('table_label').eq('id', id).single();
+  if (ord?.table_label) {
+    await supabase.from('tables').update({ status: 'free' }).eq('display_id', ord.table_label).eq('restaurant_id', RID);
+  }
+
   const { error } = await supabase
     .from('orders').delete().eq('id', id).eq('restaurant_id', RID);
   if (error) throw error;
