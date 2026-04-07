@@ -5,7 +5,6 @@ const RID = process.env.NEXT_PUBLIC_RESTAURANT_ID!;
 // DASHBOARD
 export async function getRevenueAnalytics(range: string = "This Week") {
   const supabase = createClient();
-  const RID = process.env.NEXT_PUBLIC_RESTAURANT_ID!;
   
   // 1. Determine Date Range
   const now = new Date();
@@ -47,8 +46,6 @@ export async function getRevenueAnalytics(range: string = "This Week") {
 
   orders?.forEach(order => {
     const date = new Date(order.created_at);
-    // getDay() is 0 (Sun) to 6 (Sat)
-    // We want to map it to Mon-Sun
     const d = (date.getDay() + 6) % 7;
     const dayName = days[d];
     revenueMap[dayName] += Number(order.total_amount) || 0;
@@ -518,18 +515,80 @@ export async function deleteReservation(id: string) {
 }
 
 // REPORTS & OTHERS
-export async function getReportsSummary() {
+export async function getReportsSummary(range: string = "Last 7 Days") {
   const supabase = createClient();
-  const [revenueRes, ordersRes, topItemsRes, todayRevenue] = await Promise.all([
-    supabase.from('revenue_snapshots').select('day, total, order_count').eq('restaurant_id', RID).order('snapshot_date', { ascending: true }).limit(30),
-    supabase.from('orders').select('id, status, total_amount, created_at').eq('restaurant_id', RID).order('created_at', { ascending: false }).limit(100),
-    supabase.from('order_items').select('name, quantity').order('quantity', { ascending: false }).limit(10),
+  
+  // 1. Determine Date Range
+  const endDate = new Date();
+  const startDate = new Date();
+  
+  if (range === "Last 24 Hours") {
+    startDate.setHours(endDate.getHours() - 24);
+  } else if (range === "Last 7 Days") {
+    startDate.setDate(endDate.getDate() - 7);
+  } else if (range === "Last 30 Days") {
+    startDate.setDate(endDate.getDate() - 30);
+  }
+
+  // 2. Fetch Data
+  const [ordersRes, topItemsRes, todayRevenue] = await Promise.all([
+    supabase
+      .from('orders')
+      .select('id, status, total_amount, created_at')
+      .eq('restaurant_id', RID)
+      .gte('created_at', startDate.toISOString())
+      .lte('created_at', endDate.toISOString())
+      .order('created_at', { ascending: false }),
+    supabase
+      .from('order_items')
+      .select('name, quantity')
+      .order('quantity', { ascending: false })
+      .limit(10),
     getTodayRevenue()
   ]);
+
+  if (ordersRes.error) throw ordersRes.error;
+
+  // 3. Aggregate Revenue for Trend
+  const revenueTrend: any[] = [];
+  const orders = ordersRes.data || [];
   
+  if (range === "Last 24 Hours") {
+    // Group by hour
+    for (let i = 0; i < 24; i++) {
+        const hourDate = new Date(startDate);
+        hourDate.setHours(startDate.getHours() + i + 1);
+        const label = hourDate.getHours() + ":00";
+        const total = orders
+          .filter(o => {
+            const d = new Date(o.created_at);
+            return d.getHours() === hourDate.getHours() && d.getDate() === hourDate.getDate();
+          })
+          .reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0);
+        revenueTrend.push({ day: label, total: Math.floor(total) });
+    }
+  } else {
+    // Group by day for 7d or 30d
+    const dayCount = range === "Last 7 Days" ? 7 : 30;
+    const days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    
+    for (let i = 0; i < dayCount; i++) {
+        const dayDate = new Date(startDate);
+        dayDate.setDate(startDate.getDate() + i + 1);
+        const label = days[dayDate.getDay()];
+        const total = orders
+          .filter(o => {
+            const d = new Date(o.created_at);
+            return d.getDate() === dayDate.getDate() && d.getMonth() === dayDate.getMonth();
+          })
+          .reduce((sum, o) => sum + (Number(o.total_amount) || 0), 0);
+        revenueTrend.push({ day: dayCount === 30 ? dayDate.toLocaleDateString('en-US', {day: 'numeric', month: 'short'}) : label, total: Math.floor(total) });
+    }
+  }
+
   return { 
-    revenue: revenueRes.data ?? [], 
-    orders: ordersRes.data ?? [], 
+    revenue: revenueTrend, 
+    orders: orders,
     topItems: topItemsRes.data ?? [],
     todayRevenue 
   };
