@@ -296,8 +296,8 @@ export default function OrdersPage() {
                               <div className="fixed inset-0 z-40" onClick={() => setActiveActionMenu(null)} />
                               <motion.div initial={{ opacity: 0, scale: 0.95, x: 10 }} animate={{ opacity: 1, scale: 1, x: 0 }} exit={{ opacity: 0, scale: 0.95, x: 10 }} className="absolute right-16 top-1/2 -translate-y-1/2 z-50 w-48 glass-card bg-[#0A0A0A] border-white/10 p-2 shadow-2xl overflow-hidden">
                                 <div className="absolute top-0 right-0 w-full h-1 bg-red-500/20" />
-                                <button onClick={() => { setSelectedOrder(order); setIsDeleteModalOpen(true); setActiveActionMenu(null); }} className="w-full flex items-center gap-3 px-3 py-3 text-[10px] font-bold text-red-400 group/btn rounded-lg uppercase tracking-widest transition-all hover:bg-red-500/10"><Trash2 className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" /> Decommission</button>
-                                <button onClick={() => setActiveActionMenu(null)} className="w-full flex items-center gap-3 px-3 py-3 text-[10px] font-bold text-white/20 hover:text-white hover:bg-white/5 rounded-lg uppercase tracking-widest transition-all"><Edit className="w-3.5 h-3.5" /> Modify State</button>
+                                <button onClick={() => { setSelectedOrder(order); setIsDeleteModalOpen(true); setActiveActionMenu(null); }} className="w-full flex items-center gap-3 px-3 py-3 text-[10px] font-bold text-red-400 group/btn rounded-lg uppercase tracking-widest transition-all hover:bg-red-500/10"><Trash2 className="w-3.5 h-3.5 transition-transform group-hover/btn:scale-110" /> Delete</button>
+                                <button onClick={() => setActiveActionMenu(null)} className="w-full flex items-center gap-3 px-3 py-3 text-[10px] font-bold text-white/20 hover:text-white hover:bg-white/5 rounded-lg uppercase tracking-widest transition-all"><Edit className="w-3.5 h-3.5" /> Edit State</button>
                               </motion.div>
                             </motion.div>
                           )}

@@ -242,8 +242,8 @@ export default function InventoryPage() {
                     <td className="px-8 py-6 whitespace-normal sm:whitespace-nowrap text-[10px] text-white/40 font-black uppercase tracking-tighter italic">{item.supplier || "SOURCE_UNKNOWN"}</td>
                     <td className="px-8 py-6 text-right pr-12 relative">
                       <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                        <button onClick={() => { setSelectedItem(item); setIsEditModalOpen(true); }} className="p-2.5 rounded-xl bg-white/5 hover:bg-amber-500/20 text-white/20 hover:text-amber-500 border border-white/5 hover:border-amber-500/30 transition-all active:scale-90" title="Modify Parameters"><Edit3 className="w-5 h-5" /></button>
-                        <button onClick={() => handleDelete(item.id, item.name)} className="p-2.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-white/20 hover:text-red-500 border border-white/5 hover:border-red-500/30 transition-all active:scale-90" title="Decommission Asset"><Trash2 className="w-5 h-5" /></button>
+                        <button onClick={() => { setSelectedItem(item); setIsEditModalOpen(true); }} className="p-2.5 rounded-xl bg-white/5 hover:bg-amber-500/20 text-white/20 hover:text-amber-500 border border-white/5 hover:border-amber-500/30 transition-all active:scale-90" title="Edit Parameters"><Edit3 className="w-5 h-5" /></button>
+                        <button onClick={() => handleDelete(item.id, item.name)} className="p-2.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-white/20 hover:text-red-500 border border-white/5 hover:border-red-500/30 transition-all active:scale-90" title="Delete Asset"><Trash2 className="w-5 h-5" /></button>
                       </div>
                     </td>
                   </motion.tr>

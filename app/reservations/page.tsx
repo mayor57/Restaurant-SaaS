@@ -102,11 +102,11 @@ export default function ReservationsPage() {
   };
 
   const handleDelete = async (id: string, name: string) => {
-    if (confirm(`Decommission Registry Entry for ${name}?`)) {
+    if (confirm(`Delete Registry Entry for ${name}?`)) {
       try {
         await deleteReservation(id);
         setReservations(prev => prev.filter(r => r.id !== id));
-        triggerSuccess(`Decommissioned Entry: ${name}`);
+        triggerSuccess(`Deleteed Entry: ${name}`);
       } catch (err) {
         console.error("Delete Error:", err);
       }
@@ -131,7 +131,7 @@ export default function ReservationsPage() {
                 <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none"><Calendar className="w-40 h-40" /></div>
                 <div className="flex items-center justify-between mb-10 text-white relative z-10">
                   <div>
-                    <h2 className="text-3xl font-outfit uppercase tracking-widest">{isEditModalOpen ? "Modify" : "New"} <span className="text-amber-500 font-bold">Booking</span></h2>
+                    <h2 className="text-3xl font-outfit uppercase tracking-widest">{isEditModalOpen ? "Edit" : "New"} <span className="text-amber-500 font-bold">Booking</span></h2>
                     <p className="text-white/20 text-[9px] uppercase font-bold tracking-[0.3em] mt-1 italic">Re-configuring temporal node allocation.</p>
                   </div>
                   <button onClick={() => { setIsAddModalOpen(false); setIsEditModalOpen(false); }} className="p-2 bg-white/5 hover:bg-white/10 rounded-full transition-colors"><X className="w-6 h-6 text-white/40" /></button>

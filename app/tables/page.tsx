@@ -172,7 +172,7 @@ export default function TablesPage() {
                        <button onClick={() => handleUpdateStatus(selectedTable.id, selectedTable.display_id, "free")} className="flex-1 py-4 rounded-xl bg-white/5 border border-white/10 text-white font-bold text-[10px] tracking-widest uppercase hover:bg-white/10 transition-all active:scale-95">Clear Table</button>
                        <button onClick={() => triggerSuccess(`Relocated Table ${selectedTable.display_id} on the Floor Plan`)} className="flex-1 py-4 rounded-xl bg-amber-500 text-black font-bold text-[10px] tracking-widest uppercase hover:bg-amber-400 transition-all shadow-glow shadow-amber-500/20 active:scale-95">Relocate</button>
                     </div>
-                    <button onClick={() => { if(confirm(`Are you sure you want to decommission ${selectedTable.display_id}?`)) handleDeleteTable(selectedTable.id, selectedTable.display_id); }} className="w-full py-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-bold text-[10px] tracking-widest uppercase hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2 active:scale-95"><Trash2 className="w-4 h-4" /> Decommission Table</button>
+                    <button onClick={() => { if(confirm(`Are you sure you want to delete ${selectedTable.display_id}?`)) handleDeleteTable(selectedTable.id, selectedTable.display_id); }} className="w-full py-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 font-bold text-[10px] tracking-widest uppercase hover:bg-red-500 hover:text-white transition-all flex items-center justify-center gap-2 active:scale-95"><Trash2 className="w-4 h-4" /> Delete Table</button>
                   </div>
                 </div>
               </motion.div>
