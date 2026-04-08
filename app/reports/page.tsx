@@ -64,7 +64,7 @@ export default function ReportsPage() {
 
     try {
       triggerSuccess("Generating Intelligence Report...");
-      downloadPDFReport(data, settings?.name || "Zentro Restaurant");
+      downloadPDFReport(data, settings?.name || "KEM'Z DINER");
       setIsModalOpen(false);
       triggerSuccess("Report Download Started Successfully");
     } catch (err) {
@@ -264,3 +264,4 @@ export default function ReportsPage() {
     </>
   );
 }
+

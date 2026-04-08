@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -30,7 +30,7 @@ export default function Sidebar({ className }: { className?: string }) {
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.5)]">
             <UtensilsCrossed size={18} className="text-white" />
           </div>
-          <span className="font-outfit font-bold text-xl tracking-wide text-white">RESTAURA</span>
+          <span className="font-outfit font-bold text-xl tracking-wide text-white">KEM'Z DINER</span>
         </div>
         <button 
           onClick={() => setIsOpen(false)}
