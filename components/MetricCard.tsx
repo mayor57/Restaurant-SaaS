@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -19,23 +19,23 @@ export default function MetricCard({ title, value, trend, isPositive, delay = 0,
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, delay, ease: [0.23, 1, 0.32, 1] }}
       className={cn(
-        "glass-card p-6 flex flex-col justify-between relative overflow-hidden group min-h-[140px]",
+        "glass-card p-5 md:p-6 flex flex-col justify-between relative overflow-hidden group min-h-[130px] md:min-h-[140px]",
         highlight && "border-amber-500/30 shadow-[0_4px_30px_rgba(245,158,11,0.1)]"
       )}
     >
       {highlight && (
         <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/10 blur-[50px] pointer-events-none group-hover:bg-amber-500/20 transition-colors duration-500" />
       )}
-      <span className="text-xs font-bold text-white/40 tracking-[0.15em] uppercase">{title}</span>
+      <span className="text-[10px] md:text-xs font-bold text-white/40 tracking-[0.15em] uppercase">{title}</span>
       
       <div className="mt-4 flex items-end justify-between relative z-10">
-        <span className={cn("text-4xl font-outfit font-light tracking-tight text-white", highlight && "text-glow-amber")}>
+        <span className={cn("text-3xl sm:text-4xl font-outfit font-light tracking-tight text-white transition-all", highlight && "text-glow-amber")}>
           {value}
         </span>
         
         {trend && (
           <span className={cn(
-            "text-sm font-semibold tracking-wide flex items-center gap-1",
+            "text-[10px] md:text-xs font-semibold tracking-wide flex items-center gap-1",
             isPositive ? "text-green-400" : "text-red-400"
           )}>
             {isPositive ? "+" : ""}{trend}

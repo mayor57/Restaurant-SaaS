@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Topbar from "@/components/Topbar";
 import { motion, AnimatePresence } from "framer-motion";
@@ -68,13 +68,9 @@ export default function ReservationsPage() {
       await refreshData();
       setIsAddModalOpen(false);
       triggerSuccess("Registry Entry Synchronized");
-        } catch (err: any) {
+    } catch (err: any) {
       console.error("Create Error Full:", JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
-      if (err.message.includes("PERMISSION DENIED")) {
-        alert("CRITICAL PERMISSION ERROR: Your database is blocking this entry. \n\nPlease run the SQL fix in your Supabase dashboard provided in the 'Implementation Plan'.");
-      } else {
-        alert(`Critical DB Error: ${err.message || "Unauthorized interaction"}`);
-      }
+      alert(`Critical DB Error: ${err.message || "Unauthorized interaction"}`);
     }
   };
 
@@ -97,7 +93,7 @@ export default function ReservationsPage() {
       triggerSuccess("Registry Entry Re-configured");
     } catch (err: any) {
       console.error("Update Error Full:", JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
-      alert(`Critical DB Error: ${err.message || "Unauthorized (Check for missing updated_at column)"}`);
+      alert(`Critical DB Error: ${err.message || "Unauthorized interaction"}`);
     }
   };
 
@@ -125,57 +121,57 @@ export default function ReservationsPage() {
           )}
 
           {(isAddModalOpen || isEditModalOpen) && (
-            <div key="booking-modal" className="fixed inset-0 z-50 flex items-center justify-center p-4">
-              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => { setIsAddModalOpen(false); setIsEditModalOpen(false); }} className="absolute inset-0 bg-black/60 backdrop-blur-md" />
-              <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-xl glass-card bg-[#0A0A0A]/95 border-white/10 p-10 shadow-2xl overflow-hidden">
+            <div key="booking-modal" className="fixed inset-0 z-[60] flex items-center justify-center p-4 overflow-y-auto">
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => { setIsAddModalOpen(false); setIsEditModalOpen(false); }} className="fixed inset-0 bg-black/60 backdrop-blur-md" />
+              <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-xl glass-card bg-[#0A0A0A]/95 border-white/10 p-6 md:p-10 shadow-2xl overflow-hidden my-auto">
                 <div className="absolute top-0 right-0 p-10 opacity-5 pointer-events-none"><Calendar className="w-40 h-40" /></div>
-                <div className="flex items-center justify-between mb-10 text-white relative z-10">
+                <div className="flex items-center justify-between mb-8 text-white relative z-10">
                   <div>
-                    <h2 className="text-3xl font-outfit uppercase tracking-widest">{isEditModalOpen ? "Edit" : "New"} <span className="text-amber-500 font-bold">Booking</span></h2>
-                    <p className="text-white/20 text-[9px] uppercase font-bold tracking-[0.3em] mt-1 italic">Re-configuring temporal node allocation.</p>
+                    <h2 className="text-xl md:text-3xl font-outfit uppercase tracking-widest">{isEditModalOpen ? "Edit" : "New"} <span className="text-amber-500 font-bold">Booking</span></h2>
+                    <p className="text-white/20 text-[8px] md:text-[9px] uppercase font-bold tracking-[0.3em] mt-1 italic">Temporal spatial allocation.</p>
                   </div>
-                  <button onClick={() => { setIsAddModalOpen(false); setIsEditModalOpen(false); }} className="p-2 bg-white/5 hover:bg-white/10 rounded-full transition-colors"><X className="w-6 h-6 text-white/40" /></button>
+                  <button onClick={() => { setIsAddModalOpen(false); setIsEditModalOpen(false); }} className="p-2 bg-white/5 hover:bg-white/10 rounded-full transition-colors"><X className="w-5 h-5 text-white/40" /></button>
                 </div>
                 
-                <form onSubmit={isEditModalOpen ? handleUpdate : handleCreate} className="space-y-8 relative z-10">
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-white/30 ml-1">Guest Signal (Name)</label>
-                      <input name="guest" type="text" defaultValue={selectedRes?.customer_name} placeholder="GUEST_SIG" className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white focus:outline-none focus:border-amber-500/50 uppercase" required />
+                <form onSubmit={isEditModalOpen ? handleUpdate : handleCreate} className="space-y-6 md:space-y-8 relative z-10">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                    <div className="space-y-2 md:space-y-3">
+                      <label className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white/30 ml-1">Guest Signal</label>
+                      <input name="guest" type="text" defaultValue={selectedRes?.customer_name} placeholder="GUEST_SIG" className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 text-sm text-white focus:outline-none focus:border-amber-500/50 uppercase" required />
                     </div>
-                    <div className="space-y-3">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-white/30 ml-1">Contact Link</label>
-                      <input name="phone" type="text" defaultValue={selectedRes?.phone} placeholder="+0 (000) 000-0000" className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white focus:outline-none focus:border-amber-500/50 font-mono" />
+                    <div className="space-y-2 md:space-y-3">
+                      <label className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white/30 ml-1">Contact Link</label>
+                      <input name="phone" type="text" defaultValue={selectedRes?.phone} placeholder="+0 (000) 000-0000" className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 text-sm text-white focus:outline-none focus:border-amber-500/50 font-mono" />
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-3 gap-6">
-                    <div className="space-y-3">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-white/30 ml-1">Date</label>
-                      <input name="date" type="date" defaultValue={selectedRes?.reservation_date} className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white appearance-none focus:outline-none focus:border-amber-500/50 uppercase italic" required />
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+                    <div className="space-y-2 md:space-y-3">
+                      <label className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white/30 ml-1">Date</label>
+                      <input name="date" type="date" defaultValue={selectedRes?.reservation_date} className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 text-sm text-white appearance-none focus:outline-none focus:border-amber-500/50 uppercase italic" required />
                     </div>
-                    <div className="space-y-3">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-white/30 ml-1">Time</label>
-                      <input name="time" type="time" defaultValue={selectedRes?.reservation_time} className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white appearance-none focus:outline-none focus:border-amber-500/50 italic" required />
+                    <div className="space-y-2 md:space-y-3">
+                      <label className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white/30 ml-1">Time</label>
+                      <input name="time" type="time" defaultValue={selectedRes?.reservation_time} className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 text-sm text-white appearance-none focus:outline-none focus:border-amber-500/50 italic" required />
                     </div>
-                    <div className="space-y-3">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-white/30 ml-1">Density</label>
-                      <input name="guests" type="number" defaultValue={selectedRes?.party_size} min="1" max="50" className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white focus:outline-none focus:border-amber-500/50" required />
+                    <div className="space-y-2 md:space-y-3 col-span-2 md:col-span-1">
+                      <label className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white/30 ml-1">Density (PAX)</label>
+                      <input name="guests" type="number" defaultValue={selectedRes?.party_size} min="1" max="50" className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 text-sm text-white focus:outline-none focus:border-amber-500/50" required />
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-6">
-                    <div className="space-y-3">
-                      <label className="text-[10px] font-bold uppercase tracking-widest text-white/30 ml-1">Asset (Table)</label>
-                      <select name="table_id" defaultValue={selectedRes?.table_id || ""} className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none uppercase font-bold tracking-widest cursor-pointer transition-all hover:bg-white/10">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                    <div className="space-y-2 md:space-y-3">
+                      <label className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white/30 ml-1">Asset (Table)</label>
+                      <select name="table_id" defaultValue={selectedRes?.table_id || ""} className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none uppercase font-bold tracking-widest cursor-pointer transition-all hover:bg-white/10">
                         <option value="" className="bg-[#111]">PROTOCOL_AUTO_ASSIGN</option>
                         {tables.map(t => <option key={t.id} value={t.id} className="bg-[#111]">NODE_{t.display_id} // {t.zone} // {t.seats}P</option>)}
                       </select>
                     </div>
                     {isEditModalOpen && (
-                      <div className="space-y-3">
-                        <label className="text-[10px] font-bold uppercase tracking-widest text-white/30 ml-1">Status Protocol</label>
-                        <select name="status" defaultValue={selectedRes?.status} className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none uppercase font-bold tracking-widest">
+                      <div className="space-y-2 md:space-y-3">
+                        <label className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-white/30 ml-1">Status Protocol</label>
+                        <select name="status" defaultValue={selectedRes?.status} className="w-full bg-white/5 border border-white/10 rounded-xl md:rounded-2xl px-4 md:px-5 py-3 md:py-4 text-sm text-white focus:outline-none focus:border-amber-500/50 appearance-none uppercase font-bold tracking-widest">
                           {["confirmed", "seated", "pending", "cancelled"].map(s => <option key={s} value={s} className="bg-[#111]">SIGNAL_{s.toUpperCase()}</option>)}
                         </select>
                       </div>
@@ -183,49 +179,46 @@ export default function ReservationsPage() {
                   </div>
 
                   <button 
-            
-            className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
-          >
-            
-            {isEditModalOpen ? "Commit Changes" : "Broadcast To Registry"}
-          
-          </button>
+                    className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full"
+                  >
+                    {isEditModalOpen ? "Commit Changes" : "Broadcast To Registry"}
+                  </button>
                 </form>
               </motion.div>
             </div>
           )}
         </AnimatePresence>
 
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12">
-        <div className="space-y-1">
-          <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">
-            RESERVATION <span className="text-amber-500 font-black">REGISTRY</span>
-          </h1>
-          <p className="text-white/40 text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase opacity-70 flex items-center gap-2">
-            <span className="w-8 h-[1px] bg-amber-500/30"></span>
-            BOOKING AND CAPACITY MANAGEMENT INTERFACE.
-          </p>
-        </div>
-        <div className="flex flex-col xs:flex-row items-center gap-4 w-full sm:w-auto">
-            <div className="relative group shadow-glow shadow-white/5">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-8 md:mb-12">
+          <div className="space-y-2">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-black tracking-tighter uppercase leading-none">
+              RESERVATION <span className="text-amber-500 font-black">REGISTRY</span>
+            </h1>
+            <p className="text-white/40 text-[9px] md:text-xs font-bold tracking-[0.3em] uppercase opacity-70 flex items-center gap-2">
+              <span className="w-8 h-[1px] bg-amber-500/30"></span>
+              CAPACITY MANAGEMENT INTERFACE.
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
+            <div className="relative group w-full sm:w-80 shadow-glow shadow-white/5">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-400 transition-colors" />
-              <input type="text" placeholder="Search guests..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-black/40 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs w-full sm:w-64 text-white focus:outline-none focus:border-amber-500/50 transition-all uppercase tracking-tighter" />
+              <input type="text" placeholder="Search guests..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="bg-black/40 border border-white/10 rounded-xl pl-11 pr-4 py-3 text-xs w-full text-white focus:outline-none focus:border-amber-500/50 transition-all uppercase tracking-tighter" />
             </div>
-            <button onClick={() => { setSelectedRes(null); setIsAddModalOpen(true); }} className="flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-black px-8 py-3 rounded-xl font-black tracking-[0.3em] text-[10px] transition-all shadow-glow shadow-amber-500/20 transform hover:-translate-y-0.5 uppercase active:scale-95"><Plus className="w-4 h-4" /><span>New Booking</span></button>
+            <button onClick={() => { setSelectedRes(null); setIsAddModalOpen(true); }} className="flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-black px-6 md:px-8 py-3 rounded-xl font-black tracking-[0.2em] text-[11px] transition-all shadow-glow shadow-amber-500/20 transform hover:-translate-y-0.5 uppercase active:scale-95 w-full sm:w-auto min-h-[52px]"><Plus className="w-4 h-4" /><span>New Booking</span></button>
+          </div>
         </div>
-      </div>
 
         <div className="glass-card shadow-2xl border-white/5 overflow-hidden transition-all relative z-10">
-          <div className="overflow-x-auto custom-scrollbar min-h-[500px]">
-            <table className="w-full text-left border-collapse w-full lg:min-w-[1000px]">
+          <div className="overflow-x-auto custom-scrollbar">
+            <table className="w-full text-left border-collapse min-w-[700px] lg:min-w-full">
               <thead>
                 <tr className="border-b border-white/5 bg-black/40">
-                  <th className="px-8 py-5 text-[10px] font-bold text-white/20 uppercase tracking-widest">Guest Detail</th>
-                  <th className="px-8 py-5 text-[10px] font-bold text-white/20 uppercase tracking-widest">Schedule</th>
-                  <th className="px-8 py-5 text-[10px] font-bold text-white/20 uppercase tracking-widest hidden sm:table-cell">Party</th>
-                  <th className="px-8 py-5 text-[10px] font-bold text-white/20 uppercase tracking-widest hidden lg:table-cell">Asset Allocated</th>
-                  <th className="px-8 py-5 text-[10px] font-bold text-white/20 uppercase tracking-widest">Status</th>
-                  <th className="px-8 py-5 text-right pr-12 text-[10px] font-bold text-white/20 uppercase tracking-widest">Matrix Matrix</th>
+                  <th className="px-6 md:px-8 py-5 text-[9px] md:text-[10px] font-bold text-white/20 uppercase tracking-widest">Guest Detail</th>
+                  <th className="px-6 md:px-8 py-5 text-[9px] md:text-[10px] font-bold text-white/20 uppercase tracking-widest">Schedule</th>
+                  <th className="px-6 md:px-8 py-5 text-[9px] md:text-[10px] font-bold text-white/20 uppercase tracking-widest hidden sm:table-cell">Party</th>
+                  <th className="px-6 md:px-8 py-5 text-[9px] md:text-[10px] font-bold text-white/20 uppercase tracking-widest hidden lg:table-cell">Asset</th>
+                  <th className="px-6 md:px-8 py-5 text-[9px] md:text-[10px] font-bold text-white/20 uppercase tracking-widest">Status</th>
+                  <th className="px-6 md:px-8 py-5 text-right text-[9px] md:text-[10px] font-bold text-white/20 uppercase tracking-widest">Control</th>
                 </tr>
               </thead>
               <tbody>
@@ -233,32 +226,33 @@ export default function ReservationsPage() {
                   <tr><td colSpan={6} className="px-8 py-32 text-center"><RefreshCw className="w-10 h-10 text-amber-500/30 animate-spin mx-auto" /></td></tr>
                 ) : filteredReservations.length > 0 ? filteredReservations.map((res, i) => (
                   <motion.tr key={res.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.03 }} className="border-b border-white/[0.02] hover:bg-white/[0.03] transition-colors group">
-                    <td className="px-8 py-6">
-                      <div className="text-sm font-black text-white group-hover:text-amber-400 transition-colors uppercase tracking-tight mb-1">{res.customer_name}</div>
-                      <div className="text-[10px] text-white/20 font-mono italic tracking-widest">{res.phone || "CONTACT_HIDDEN"}</div>
+                    <td className="px-6 md:px-8 py-4 md:py-6">
+                      <div className="text-xs md:text-sm font-black text-white group-hover:text-amber-400 transition-colors uppercase tracking-tight mb-1">{res.customer_name}</div>
+                      <div className="text-[9px] md:text-[10px] text-white/20 font-mono italic tracking-widest">{res.phone || "CONTACT_HIDDEN"}</div>
                     </td>
-                    <td className="px-8 py-6">
-                      <div className="text-xs text-white/60 font-bold uppercase tracking-widest mb-1 italic">{new Date(res.reservation_date).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric"}) }</div>
-                      <div className="text-xs text-amber-500 font-mono font-black">{res.reservation_time}</div>
+                    <td className="px-6 md:px-8 py-4 md:py-6">
+                      <div className="text-[10px] md:text-xs text-white/60 font-bold uppercase tracking-widest mb-1 italic">{new Date(res.reservation_date).toLocaleDateString([], { month: "short", day: "numeric", year: "numeric"}) }</div>
+                      <div className="text-[10px] md:text-xs text-amber-500 font-mono font-black">{res.reservation_time}</div>
                     </td>
-                    <td className="px-8 py-6 hidden sm:table-cell">
-                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg border border-white/5 text-[10px] font-black text-white/30 uppercase tracking-widest"><Users className="w-3 h-3" /> {res.party_size} PAX</div>
+                    <td className="px-6 md:px-8 py-4 md:py-6 hidden sm:table-cell">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 bg-white/5 rounded-lg border border-white/5 text-[9px] md:text-[10px] font-black text-white/30 uppercase tracking-widest"><Users className="w-3 h-3" /> {res.party_size} PAX</div>
                     </td>
-                    <td className="px-8 py-6 hidden lg:table-cell">
-                      <span className="text-[9px] font-mono font-black text-amber-500/60 uppercase tracking-[0.3em] bg-amber-500/5 px-3 py-1.5 rounded-lg border border-amber-500/10">
+                    <td className="px-6 md:px-8 py-4 md:py-6 hidden lg:table-cell">
+                      <span className="text-[8px] md:text-[9px] font-mono font-black text-amber-500/60 uppercase tracking-[0.3em] bg-amber-500/5 px-2 md:px-3 py-1.5 rounded-lg border border-amber-500/10">
                         {res.tables?.display_id ? `NODE_${res.tables.display_id}` : "ASSET_PENDING"}
                       </span>
                     </td>
-                    <td className="px-8 py-6">
-                      <div className={`inline-flex items-center gap-2 px-4 py-1.5 rounded-xl text-[9px] font-black uppercase tracking-[0.2em] border ${res.status === "confirmed" ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : res.status === "seated" ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : res.status === "cancelled" ? "bg-red-500/10 text-red-500 border-red-500/20" : "bg-white/5 text-white/20 border-white/10"}`}>
+                    <td className="px-6 md:px-8 py-4 md:py-6">
+                      <div className={`inline-flex items-center gap-2 px-3 md:px-4 py-1.5 rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-[0.2em] border ${res.status === "confirmed" ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20" : res.status === "seated" ? "bg-amber-500/10 text-amber-500 border-amber-500/20" : res.status === "cancelled" ? "bg-red-500/10 text-red-500 border-red-500/20" : "bg-white/5 text-white/20 border-white/10"}`}>
                         <div className={`w-1.5 h-1.5 rounded-full ${res.status === "confirmed" ? "bg-emerald-500 shadow-glow" : res.status === "seated" ? "bg-amber-500 shadow-glow" : "bg-white/30"}`} />
-                        {res.status}
+                        <span className="hidden xs:inline">{res.status}</span>
+                        <span className="xs:hidden font-mono">{res.status.charAt(0).toUpperCase()}</span>
                       </div>
                     </td>
-                    <td className="px-8 py-6 text-right pr-12 relative">
-                       <div className="flex justify-end gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
-                          <button onClick={() => { setSelectedRes(res); setIsEditModalOpen(true); }} className="p-2.5 rounded-xl bg-white/5 hover:bg-amber-500/20 text-white/20 hover:text-amber-500 border border-white/5 hover:border-amber-500/30 transition-all active:scale-90"><Edit3 className="w-5 h-5" /></button>
-                          <button onClick={() => handleDelete(res.id, res.customer_name)} className="p-2.5 rounded-xl bg-white/5 hover:bg-red-500/20 text-white/20 hover:text-red-500 border border-white/5 hover:border-red-500/30 transition-all active:scale-90"><Trash2 className="w-5 h-5" /></button>
+                    <td className="px-6 md:px-8 py-4 md:py-6 text-right relative">
+                       <div className="flex justify-end gap-2 md:gap-3 opacity-0 group-hover:opacity-100 transition-all translate-x-4 group-hover:translate-x-0">
+                          <button onClick={() => { setSelectedRes(res); setIsEditModalOpen(true); }} className="p-2 md:p-2.5 rounded-lg md:rounded-xl bg-white/5 hover:bg-amber-500/20 text-white/20 hover:text-amber-500 border border-white/5 hover:border-amber-500/30 transition-all active:scale-90"><Edit3 className="w-4 h-4 md:w-5 md:h-5" /></button>
+                          <button onClick={() => handleDelete(res.id, res.customer_name)} className="p-2 md:p-2.5 rounded-lg md:rounded-xl bg-white/5 hover:bg-red-500/20 text-white/20 hover:text-red-500 border border-white/5 hover:border-red-500/30 transition-all active:scale-90"><Trash2 className="w-4 h-4 md:w-5 md:h-5" /></button>
                        </div>
                     </td>
                   </motion.tr>
@@ -273,5 +267,3 @@ export default function ReservationsPage() {
     </>
   );
 }
-
-

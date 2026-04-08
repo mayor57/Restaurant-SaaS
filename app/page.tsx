@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Topbar from "@/components/Topbar";
 import MetricCard from "@/components/MetricCard";
@@ -120,9 +120,9 @@ export default function Dashboard() {
           )}
         </AnimatePresence>
 
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-12 relative z-10">
-          <div className="space-y-1">
-            <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none text-white">
+        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-12 relative z-10">
+          <div className="space-y-2">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none text-white lg:max-w-xl">
               DASHBOARD <span className="text-amber-500 font-black">SUMMARY</span>
             </h1>
             <p className="text-white/40 text-[10px] md:text-xs font-bold tracking-[0.3em] uppercase opacity-70 flex items-center gap-2">
@@ -130,18 +130,18 @@ export default function Dashboard() {
               GLOBAL OPERATIONS OVERVIEW.
             </p>
           </div>
-          <div className="flex items-center gap-3 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 w-full lg:w-auto">
             {/* Range Selector / Calendar */}
-            <div className="relative flex-1 sm:flex-none">
+            <div className="relative w-full sm:w-auto min-w-[160px]">
               <button 
                 onClick={() => setIsRangeOpen(!isRangeOpen)}
-                className="flex items-center justify-between gap-3 px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white/70 hover:text-white hover:border-amber-500/30 transition-all w-full min-w-[160px]"
+                className="flex items-center justify-between gap-3 px-5 py-4 bg-white/5 border border-white/10 rounded-2xl text-white/70 hover:text-white hover:border-amber-500/30 transition-all w-full"
               >
                 <div className="flex items-center gap-2">
                   <Calendar className="w-4 h-4 text-amber-500" />
                   <span className="text-[10px] font-bold uppercase tracking-widest">{selectedRange}</span>
                 </div>
-                <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isRangeOpen ? "rotate-180" : ""}`} />
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isRangeOpen ? "rotate-180" : ""}`} />
               </button>
               
               <AnimatePresence>
@@ -152,7 +152,7 @@ export default function Dashboard() {
                       initial={{ opacity: 0, y: 10, scale: 0.95 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                      className="absolute top-full right-0 mt-2 w-48 glass-card bg-[#0A0A0A] border-white/10 p-2 z-50 shadow-2xl"
+                      className="absolute top-full right-0 mt-2 w-full sm:w-48 glass-card bg-[#0A0A0A] border-white/10 p-2 z-50 shadow-2xl"
                     >
                       {["This Week", "Last Week"].map((range) => (
                         <button
@@ -169,19 +169,21 @@ export default function Dashboard() {
               </AnimatePresence>
             </div>
 
-            <button 
-              onClick={() => { triggerSuccess("Global Sync Initiated"); loadData(); }}
-              className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-white/40 hover:text-white flex items-center justify-center h-[58px] w-[58px]"
-            >
-              <RefreshCw className={`w-5 h-5 ${isRefreshingAnalytics ? "animate-spin" : ""}`} />
-            </button>
-            <Link href="/orders" className="flex-1 sm:flex-none">
+            <div className="flex items-stretch sm:items-center gap-3 w-full sm:w-auto">
               <button 
-                className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 h-[58px] min-w-[140px]"
+                onClick={() => { triggerSuccess("Global Sync Initiated"); loadData(); }}
+                className="p-4 bg-white/5 hover:bg-white/10 rounded-2xl border border-white/10 transition-all text-white/40 hover:text-white flex items-center justify-center flex-shrink-0"
               >
-                Live View
+                <RefreshCw className={`w-5 h-5 ${isRefreshingAnalytics ? "animate-spin" : ""}`} />
               </button>
-            </Link>
+              <Link href="/orders" className="flex-1">
+                <button 
+                  className="w-full inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 text-[10px] min-h-[58px]"
+                >
+                  LIVE VIEW
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -217,20 +219,20 @@ export default function Dashboard() {
           />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 lg:h-[500px] mb-10 relative z-10">
-          <div className="lg:col-span-5 h-[400px] lg:h-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 lg:h-[550px] mb-10 relative z-10">
+          <div className="lg:col-span-5 h-[450px] lg:h-full">
             <LiveOrdersPanel initialOrders={data.liveOrders} />
           </div>
-          <div className="lg:col-span-7 h-[400px] lg:h-full">
+          <div className="lg:col-span-7 h-[450px] lg:h-full">
             <FloorMap initialTables={data.tableStatus} />
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 lg:h-[450px] relative z-10">
-          <div className="lg:col-span-8 h-[350px] lg:h-full">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 lg:h-[480px] relative z-10">
+          <div className="lg:col-span-8 h-[400px] lg:h-full">
             <AnalyticsSection initialData={data.revenueData} isLoading={isRefreshingAnalytics} rangeLabel={selectedRange} />
           </div>
-          <div className="lg:col-span-4 lg:h-full">
+          <div className="lg:col-span-4 h-auto lg:h-full">
             <div className="glass-card flex flex-col h-full bg-[#0A0A0A]/40 p-6 lg:p-8 border-white/5 relative overflow-hidden">
               <div className="absolute top-0 right-0 p-8 opacity-5"><BarChart3 className="w-32 h-32" /></div>
               <div className="border-b border-white/5 pb-6 mb-6 flex items-center justify-between relative z-10">
@@ -254,7 +256,7 @@ export default function Dashboard() {
                           </div>
                         </div>
                         <button 
-                         className="inline-flex items-center justify-center gap-3 px-8 py-4 bg-amber-500 text-black font-black rounded-2xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-2xl shadow-amber-500/20 w-full sm:w-auto"
+                         className="inline-flex items-center justify-center px-4 py-2 bg-amber-500 text-black font-black rounded-xl uppercase tracking-widest transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-amber-500/20 text-[9px] w-auto"
                         >
                           {alert.action || "Fix"}
                         </button>
