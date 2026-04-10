@@ -1,8 +1,8 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import { signUp } from "@/lib/auth-actions";
-import { UtensilsCrossed, ArrowRight, Lock, Mail, Building, Loader2, CheckCircle } from "lucide-react";
+import { UtensilsCrossed, ArrowRight, Lock, Mail, Building, Loader2, CheckCircle, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
@@ -52,9 +52,17 @@ export default function SignupPage() {
             <motion.div 
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
-              className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium text-center"
+              className="mb-8 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs font-medium relative overflow-hidden group"
             >
-              {error}
+              <div className="flex gap-3 items-start relative z-10">
+                <AlertCircle size={16} className="shrink-0 mt-0.5" />
+                <p className="leading-relaxed">{error}</p>
+              </div>
+              {error.includes("limit") && (
+                 <div className="mt-3 pt-3 border-t border-red-500/10 text-[10px] text-red-400/60 uppercase font-black tracking-widest">
+                    Handshake throttled by provider quotas.
+                 </div>
+              )}
             </motion.div>
           )}
 
@@ -69,13 +77,24 @@ export default function SignupPage() {
                   <CheckCircle className="w-8 h-8 text-emerald-500" />
                 </div>
               </div>
-              <h2 className="text-xl font-bold text-white uppercase tracking-widest italic">Verification Required</h2>
-              <p className="text-white/60 text-sm leading-relaxed">
-                A verification sequence has been dispatched to your frequency. Please finalize the handshake via the link in your email.
+              <h2 className="text-xl font-bold text-white uppercase tracking-widest italic">Handshake Sent</h2>
+              <p className="text-white/60 text-sm leading-relaxed antialiased">
+                {success}
               </p>
-              <div className="pt-6">
+              
+              {/* Troubleshooting Tip */}
+              <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 mt-6">
+                <p className="text-[9px] uppercase font-black tracking-[0.2em] text-white/30 mb-2">Troubleshooting handshake</p>
+                <ul className="text-[11px] text-white/40 space-y-2 text-left list-disc list-inside px-1">
+                  <li>Check the "Spam" or "Promotions" frequency.</li>
+                  <li>Verify if your restaurant domain is restricted.</li>
+                  <li>Wait 10 minutes if delivery was throttled.</li>
+                </ul>
+              </div>
+
+              <div className="pt-8">
                  <Link href="/login" className="text-amber-500 hover:text-amber-400 text-[10px] uppercase font-bold tracking-[0.3em] italic border-b border-amber-500/30 pb-1 transition-all">
-                    Return to login
+                    Return to Login
                  </Link>
               </div>
             </motion.div>
@@ -140,12 +159,14 @@ export default function SignupPage() {
             </form>
           )}
 
-          <div className="mt-10 text-center">
-            <p className="text-white/30 text-[10px] uppercase font-bold tracking-widest">
-              Already have an account? 
-              <Link href="/login" className="text-amber-500 hover:text-amber-400 ml-2 transition-colors">Login</Link>
-            </p>
-          </div>
+          {!success && (
+            <div className="mt-10 text-center border-t border-white/5 pt-8">
+              <p className="text-white/30 text-[10px] uppercase font-bold tracking-widest">
+                Already have an account? 
+                <Link href="/login" className="text-amber-500 hover:text-amber-400 ml-2 transition-colors">Login</Link>
+              </p>
+            </div>
+          )}
         </div>
       </motion.div>
     </div>

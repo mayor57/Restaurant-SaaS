@@ -1,4 +1,4 @@
-﻿"use server";
+"use server";
 
 import { createClient } from "./supabase/server";
 import { redirect } from "next/navigation";
@@ -42,7 +42,8 @@ export async function signUp(formData: FormData) {
     return { error: "Invalid email or password format" };
   }
 
-  const origin = headers().get("origin");
+  const originHeaders = headers();
+  const origin = originHeaders.get("origin") || originHeaders.get("referer");
   const supabase = await createClient();
   
   const { data, error } = await supabase.auth.signUp({
@@ -57,13 +58,14 @@ export async function signUp(formData: FormData) {
   });
 
   if (error) {
+    if (error.message.toLowerCase().includes("rate limit")) {
+      return { error: "Verification limit reached. Supabase free tier only allows 3 signup attempts per hour. Please wait a few minutes or check your spam for previous links." };
+    }
     return { error: error.message };
   }
 
-  // If email confirmation is enabled, we should tell the user to check their email
-  // instead of redirecting immediately to a protected route (which would redirect back to login)
   if (data?.user && data?.session === null) {
-      return { success: "Registration successful. Please check your email to verify your account." };
+      return { success: "Handshake initialized. Please verify your identity via the transmission sent to your email." };
   }
 
   redirect("/");
