@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, LayoutGrid, UtensilsCrossed, CalendarDays, MenuSquare, PackageSearch, Users, ChefHat, LineChart, Settings, X } from "lucide-react";
+import { LayoutDashboard, LayoutGrid, UtensilsCrossed, CalendarDays, MenuSquare, PackageSearch, Users, ChefHat, LineChart, Settings, X, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/context/SidebarContext";
+import { signOut } from "@/lib/auth-actions";
 import { motion, AnimatePresence } from "framer-motion";
 
 const NAV_ITEMS = [
@@ -62,11 +63,18 @@ export default function Sidebar({ className }: { className?: string }) {
         })}
       </div>
 
-      <div className="p-4 mt-auto">
+      <div className="p-4 mt-auto space-y-1">
         <Link href="/settings" className={cn("group flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300", pathname === "/settings" ? "bg-white/[0.08] text-white" : "text-white/50 hover:text-white hover:bg-white/[0.04]")}>
           <Settings size={20} className="group-hover:rotate-90 transition-transform duration-500" />
           <span className="font-medium text-sm tracking-wide">Settings</span>
         </Link>
+        <button 
+          onClick={() => signOut()}
+          className="w-full group flex items-center gap-3 px-4 py-3 rounded-xl text-red-400/60 hover:text-red-400 hover:bg-red-500/5 transition-all duration-300"
+        >
+          <LogOut size={20} className="group-hover:-translate-x-1 transition-transform" />
+          <span className="font-medium text-sm tracking-wide">Sign Out</span>
+        </button>
       </div>
     </aside>
   );
