@@ -2,6 +2,7 @@
 
 import { createClient } from "./supabase/server";
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { z } from "zod";
 
 const authSchema = z.object({
@@ -41,11 +42,14 @@ export async function signUp(formData: FormData) {
     return { error: "Invalid email or password format" };
   }
 
+  const origin = headers().get("origin");
   const supabase = await createClient();
+  
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
+      emailRedirectTo: `${origin}/auth/callback`,
       data: {
         restaurant_name: restaurantName,
       },
@@ -54,6 +58,12 @@ export async function signUp(formData: FormData) {
 
   if (error) {
     return { error: error.message };
+  }
+
+  // If email confirmation is enabled, we should tell the user to check their email
+  // instead of redirecting immediately to a protected route (which would redirect back to login)
+  if (data?.user && data?.session === null) {
+      return { success: "Registration successful. Please check your email to verify your account." };
   }
 
   redirect("/");

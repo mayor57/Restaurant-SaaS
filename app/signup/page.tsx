@@ -2,22 +2,28 @@
 
 import { useState } from "react";
 import { signUp } from "@/lib/auth-actions";
-import { UtensilsCrossed, ArrowRight, Lock, Mail, Building, Loader2 } from "lucide-react";
+import { UtensilsCrossed, ArrowRight, Lock, Mail, Building, Loader2, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
 export default function SignupPage() {
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
     setError(null);
+    setSuccess(null);
     const formData = new FormData(e.currentTarget);
     const result = await signUp(formData);
+    
     if (result?.error) {
       setError(result.error);
+      setLoading(false);
+    } else if (result?.success) {
+      setSuccess(result.success);
       setLoading(false);
     }
   }
@@ -52,64 +58,87 @@ export default function SignupPage() {
             </motion.div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Restaurant Name</label>
-              <div className="relative group">
-                <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-500 transition-colors" />
-                <input 
-                  name="restaurantName" 
-                  type="text" 
-                  placeholder="KEM'Z DINER" 
-                  required 
-                  className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:bg-white/[0.05] transition-all"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Email Address</label>
-              <div className="relative group">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-500 transition-colors" />
-                <input 
-                  name="email" 
-                  type="email" 
-                  placeholder="commander@diner.com" 
-                  required 
-                  className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:bg-white/[0.05] transition-all"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Enter Password</label>
-              <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-500 transition-colors" />
-                <input 
-                  name="password" 
-                  type="password" 
-                  placeholder="••••••••" 
-                  required 
-                  className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:bg-white/[0.05] transition-all"
-                />
-              </div>
-            </div>
-
-            <button 
-              type="submit" 
-              disabled={loading}
-              className="w-full bg-amber-500 hover:bg-amber-400 text-black font-black py-4 rounded-2xl shadow-[0_0_20px_rgba(245,158,11,0.2)] transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-xs mt-8 group disabled:opacity-50 disabled:cursor-not-allowed"
+          {success ? (
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-center py-8 space-y-4"
             >
-              {loading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
-              ) : (
-                <>
-                  Proceed
-                  <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                </>
-              )}
-            </button>
-          </form>
+              <div className="flex justify-center">
+                <div className="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center border border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+                  <CheckCircle className="w-8 h-8 text-emerald-500" />
+                </div>
+              </div>
+              <h2 className="text-xl font-bold text-white uppercase tracking-widest italic">Verification Required</h2>
+              <p className="text-white/60 text-sm leading-relaxed">
+                A verification sequence has been dispatched to your frequency. Please finalize the handshake via the link in your email.
+              </p>
+              <div className="pt-6">
+                 <Link href="/login" className="text-amber-500 hover:text-amber-400 text-[10px] uppercase font-bold tracking-[0.3em] italic border-b border-amber-500/30 pb-1 transition-all">
+                    Return to login
+                 </Link>
+              </div>
+            </motion.div>
+          ) : (
+            <form onSubmit={handleSubmit} className="space-y-5">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Restaurant Name</label>
+                <div className="relative group">
+                  <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-500 transition-colors" />
+                  <input 
+                    name="restaurantName" 
+                    type="text" 
+                    placeholder="KEM'Z DINER" 
+                    required 
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:bg-white/[0.05] transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Email Address</label>
+                <div className="relative group">
+                  <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-500 transition-colors" />
+                  <input 
+                    name="email" 
+                    type="email" 
+                    placeholder="commander@diner.com" 
+                    required 
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:bg-white/[0.05] transition-all"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Enter Password</label>
+                <div className="relative group">
+                  <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-500 transition-colors" />
+                  <input 
+                    name="password" 
+                    type="password" 
+                    placeholder="••••••••" 
+                    required 
+                    className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:bg-white/[0.05] transition-all"
+                  />
+                </div>
+              </div>
+
+              <button 
+                type="submit" 
+                disabled={loading}
+                className="w-full bg-amber-500 hover:bg-amber-400 text-black font-black py-4 rounded-2xl shadow-[0_0_20px_rgba(245,158,11,0.2)] transition-all flex items-center justify-center gap-3 uppercase tracking-widest text-xs mt-8 group disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) : (
+                  <>
+                    Proceed
+                    <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
+                  </>
+                )}
+              </button>
+            </form>
+          )}
 
           <div className="mt-10 text-center">
             <p className="text-white/30 text-[10px] uppercase font-bold tracking-widest">
@@ -122,4 +151,3 @@ export default function SignupPage() {
     </div>
   );
 }
-
