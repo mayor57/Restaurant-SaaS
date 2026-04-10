@@ -199,7 +199,7 @@ export default function Dashboard() {
           <MetricCard 
             title="Live Service Orders" 
             value={data.liveOrders.length.toString()} 
-            trend={`${Math.floor(Math.random() * 20 + 70)}% Load`} 
+            trend="82% Load" 
             isPositive={data.liveOrders.length < 10} 
             delay={0.2} 
           />
@@ -276,3 +276,4 @@ export default function Dashboard() {
     </>
   );
 }
+
