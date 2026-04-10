@@ -1,12 +1,12 @@
 ﻿"use client";
 
 import { useState } from "react";
-import { signUp } from "@/lib/auth-actions";
-import { UtensilsCrossed, ArrowRight, Lock, Mail, Building, Loader2 } from "lucide-react";
+import { signIn } from "@/lib/auth-actions";
+import { UtensilsCrossed, ArrowRight, Lock, Mail, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 
-export default function SignupPage() {
+export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -15,7 +15,7 @@ export default function SignupPage() {
     setLoading(true);
     setError(null);
     const formData = new FormData(e.currentTarget);
-    const result = await signUp(formData);
+    const result = await signIn(formData);
     if (result?.error) {
       setError(result.error);
       setLoading(false);
@@ -25,8 +25,8 @@ export default function SignupPage() {
   return (
     <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background Ambience */}
-      <div className="absolute top-1/4 right-1/4 w-96 h-96 bg-amber-500/10 blur-[120px] rounded-full pointer-events-none" />
-      <div className="absolute bottom-1/4 left-1/4 w-96 h-96 bg-orange-600/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-amber-500/10 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-orange-600/5 blur-[120px] rounded-full pointer-events-none" />
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -38,8 +38,8 @@ export default function SignupPage() {
             <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center shadow-[0_0_25px_rgba(245,158,11,0.4)] mb-6">
               <UtensilsCrossed size={28} className="text-white" />
             </div>
-            <h1 className="text-3xl font-outfit font-bold tracking-tight text-white uppercase italic">UNIT <span className="text-amber-500">REGISTRATION</span></h1>
-            <p className="text-white/40 text-[10px] uppercase font-bold tracking-[0.4em] mt-2">Initialize SaaS Instance</p>
+            <h1 className="text-3xl font-outfit font-bold tracking-tight text-white uppercase italic">KEM'Z <span className="text-amber-500">DINER</span></h1>
+            <p className="text-white/40 text-[10px] uppercase font-bold tracking-[0.4em] mt-2">Command Center Access</p>
           </div>
 
           {error && (
@@ -54,27 +54,13 @@ export default function SignupPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Entity Name</label>
-              <div className="relative group">
-                <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-500 transition-colors" />
-                <input 
-                  name="restaurantName" 
-                  type="text" 
-                  placeholder="KEM'Z DINER" 
-                  required 
-                  className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:bg-white/[0.05] transition-all"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Admin Frequency</label>
+              <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Frequency Address</label>
               <div className="relative group">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-500 transition-colors" />
                 <input 
                   name="email" 
                   type="email" 
-                  placeholder="commander@diner.com" 
+                  placeholder="name@restaurant.com" 
                   required 
                   className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:bg-white/[0.05] transition-all"
                 />
@@ -82,7 +68,7 @@ export default function SignupPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Master Access Key</label>
+              <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Access Cipher</label>
               <div className="relative group">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-500 transition-colors" />
                 <input 
@@ -104,7 +90,7 @@ export default function SignupPage() {
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <>
-                  Initialize Terminal
+                  Engage Protocol
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </>
               )}
@@ -113,8 +99,8 @@ export default function SignupPage() {
 
           <div className="mt-10 text-center">
             <p className="text-white/30 text-[10px] uppercase font-bold tracking-widest">
-              Existing signature detected? 
-              <Link href="/login" className="text-amber-500 hover:text-amber-400 ml-2 transition-colors">Authorize Access</Link>
+              Digital twin transmission pending? 
+              <Link href="/signup" className="text-amber-500 hover:text-amber-400 ml-2 transition-colors">Register Unit</Link>
             </p>
           </div>
         </div>
