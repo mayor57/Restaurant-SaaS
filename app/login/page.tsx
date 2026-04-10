@@ -39,7 +39,7 @@ export default function LoginPage() {
               <UtensilsCrossed size={28} className="text-white" />
             </div>
             <h1 className="text-3xl font-outfit font-bold tracking-tight text-white uppercase italic">KEM'Z <span className="text-amber-500">DINER</span></h1>
-            <p className="text-white/40 text-[10px] uppercase font-bold tracking-[0.4em] mt-2">Command Center Access</p>
+            <p className="text-white/40 text-[10px] uppercase font-bold tracking-[0.4em] mt-2">Login to your account</p>
           </div>
 
           {error && (
@@ -54,7 +54,7 @@ export default function LoginPage() {
 
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Frequency Address</label>
+              <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Email Address</label>
               <div className="relative group">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-500 transition-colors" />
                 <input 
@@ -68,7 +68,7 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Access Cipher</label>
+              <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Enter Password</label>
               <div className="relative group">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-500 transition-colors" />
                 <input 
@@ -90,7 +90,7 @@ export default function LoginPage() {
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <>
-                  Engage Protocol
+                  Proceed
                   <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
                 </>
               )}
@@ -99,8 +99,8 @@ export default function LoginPage() {
 
           <div className="mt-10 text-center">
             <p className="text-white/30 text-[10px] uppercase font-bold tracking-widest">
-              Digital twin transmission pending? 
-              <Link href="/signup" className="text-amber-500 hover:text-amber-400 ml-2 transition-colors">Register Unit</Link>
+              Don't have an account? 
+              <Link href="/signup" className="text-amber-500 hover:text-amber-400 ml-2 transition-colors">Sign Up</Link>
             </p>
           </div>
         </div>
@@ -108,3 +108,4 @@ export default function LoginPage() {
     </div>
   );
 }
+
