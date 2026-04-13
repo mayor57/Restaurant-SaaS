@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { Search, Bell, Settings, LogOut, User, CheckCircle, Smartphone, Menu } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -40,8 +40,8 @@ export default function Topbar() {
     });
 
     return () => {
-      clearInterval(interval);
-      subscription.unsubscribe();
+      if (interval) clearInterval(interval);
+      if (subscription) subscription.unsubscribe();
     };
   }, []);
 
@@ -117,7 +117,7 @@ export default function Topbar() {
             >
               <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/10 hover:border-amber-500/50 transition-colors shadow-2xl flex items-center justify-center bg-[#0A0A0A]">
                 {user ? (
-                   <img src={https://ui-avatars.com/api/?name=&background=1A1A1A&color=f59e0b&bold=true} alt="Profile" className="w-full h-full object-cover" />
+                   <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(getInitials(user))}&background=1A1A1A&color=f59e0b&bold=true`} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
                    <div className="w-full h-full bg-white/5 animate-pulse" />
                 )}
@@ -168,3 +168,4 @@ export default function Topbar() {
     </header>
   );
 }
+

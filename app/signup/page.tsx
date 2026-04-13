@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { signUp } from "@/lib/auth-actions";
@@ -135,7 +135,7 @@ export default function SignupPage() {
                   <input 
                     name="password" 
                     type="password" 
-                    placeholder="••••••••" 
+                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" 
                     required 
                     className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:bg-white/[0.05] transition-all"
                   />
@@ -172,3 +172,4 @@ export default function SignupPage() {
     </div>
   );
 }
+
