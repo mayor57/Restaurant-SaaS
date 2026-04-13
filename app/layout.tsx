@@ -7,18 +7,21 @@ const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
-  title: "KEM'Z DINER",
-  description: "Cinematic, pixel-perfect digital control panel.",
+  title: "KEM'Z DINER | Dashboard",
+  description: "Next-generation KEM'Z DINER management operating system.",
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="en" className="dark" suppressHydrationWarning>
-      <body className={`${inter.variable} ${outfit.variable} font-sans overflow-hidden bg-background text-foreground h-screen flex relative`}>
+    <html lang="en">
+      <body className={${inter.variable}  font-inter bg-[#050505] text-white min-h-screen antialiased selection:bg-amber-500/30 selection:text-amber-200}>
         <LayoutContent>{children}</LayoutContent>
       </body>
     </html>
   );
 }
-
 

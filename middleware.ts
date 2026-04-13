@@ -34,15 +34,20 @@ export async function middleware(request: NextRequest) {
 
   const { pathname } = request.nextUrl
   
-  // Define public routes
+  // Define public routes explicitly (Allowlist)
   const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/signup")
+  
+  // Match Next.js internals and static assets
   const isPublicAsset = pathname.startsWith("/_next") || 
                         pathname.startsWith("/favicon.ico") || 
                         pathname.match(/\.(svg|png|jpg|jpeg|gif|webp)$/)
 
-  // 1. Redirect unauthenticated users to login
+  // 1. Redirect unauthenticated users to login for ANY protected route
   if (!user && !isAuthPage && !isPublicAsset) {
-    return NextResponse.redirect(new URL("/login", request.url))
+    const url = new URL("/login", request.url)
+    // Optional: save the attempt URL to redirect back after login
+    // url.searchParams.set("next", pathname)
+    return NextResponse.redirect(url)
   }
 
   // 2. Redirect authenticated users away from auth pages to home
@@ -55,7 +60,13 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder files (svg, png, etc.)
+     */
     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 }
-

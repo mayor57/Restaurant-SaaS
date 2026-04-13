@@ -30,7 +30,7 @@ export default function Topbar() {
       if (data.user) setUser(data.user);
     });
 
-    // Listen for changes
+    // Listen for real-time authentication changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session?.user) {
         setUser(session.user);
@@ -51,11 +51,12 @@ export default function Topbar() {
   };
 
   const getInitials = (user: any) => {
-    const name = user?.user_metadata?.restaurant_name || user?.email?.split("@")[0] || "Admin User";
+    if (!user) return "U";
+    const name = user?.user_metadata?.restaurant_name || user?.email?.split("@")[0] || "User";
     return name.split(/[\s_-]+/).map((n: string) => n[0]).join("").toUpperCase().slice(0, 2);
   };
 
-  const displayName = user?.user_metadata?.restaurant_name || user?.email?.split("@")[0] || "User Session";
+  const displayName = user?.user_metadata?.restaurant_name || user?.email?.split("@")[0] || "Guest Session";
 
   return (
     <header className="h-20 px-4 lg:px-8 flex items-center justify-between border-b border-white/5 bg-black/20 backdrop-blur-md z-[100] sticky top-0">
@@ -96,6 +97,12 @@ export default function Topbar() {
       </div>
 
       <div className="flex items-center gap-4 lg:gap-8 ml-4">
+        {/* Branding label for Dashboard */}
+        <div className="hidden xl:flex items-center gap-2 border-r border-white/10 pr-8 mr-2 transition-all">
+          <span className="text-[10px] font-black text-amber-500 uppercase tracking-[0.4em] whitespace-nowrap opacity-70">Unified Brand</span>
+          <span className="text-sm font-black text-white tracking-widest uppercase">KEM'Z DINER</span>
+        </div>
+
         <div className="hidden sm:flex flex-col items-end">
           <span className="text-[9px] text-white/40 font-black uppercase tracking-[0.3em] whitespace-nowrap">Telemetry Sync</span>
           <span className="text-[10px] text-white/90 font-bold tracking-widest uppercase italic">{time}</span>
@@ -117,7 +124,7 @@ export default function Topbar() {
             >
               <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/10 hover:border-amber-500/50 transition-colors shadow-2xl flex items-center justify-center bg-[#0A0A0A]">
                 {user ? (
-                   <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(getInitials(user))}&background=1A1A1A&color=f59e0b&bold=true`} alt="Profile" className="w-full h-full object-cover" />
+                   <img src={https://ui-avatars.com/api/?name=&background=1A1A1A&color=f59e0b&bold=true} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
                    <div className="w-full h-full bg-white/5 animate-pulse" />
                 )}
@@ -168,4 +175,3 @@ export default function Topbar() {
     </header>
   );
 }
-
