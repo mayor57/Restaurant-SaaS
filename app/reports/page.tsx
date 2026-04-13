@@ -1,6 +1,5 @@
 ﻿"use client";
 
-import Topbar from "@/components/Topbar";
 import { motion, AnimatePresence } from "framer-motion";
 import { TrendingUp, BarChart3, Download, Calendar, PieChart, Activity, ChevronDown, X, FileText, CheckCircle, RefreshCw } from "lucide-react";
 import { useState, useEffect, useCallback } from "react";
@@ -89,8 +88,7 @@ export default function ReportsPage() {
 
   return (
     <>
-      <Topbar />
-      <main className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 pb-32 relative bg-[#050505]">
+            <main className="flex-1 overflow-y-auto custom-scrollbar p-4 md:p-8 pb-32 relative bg-[#050505]">
         <AnimatePresence>
           {showSuccess && (
             <motion.div key="success-toast" initial={{ opacity: 0, y: -20, x: "-50%" }} animate={{ opacity: 1, y: 20, x: "-50%" }} exit={{ opacity: 0, y: -20, x: "-50%" }} className="fixed top-0 left-1/2 z-50 bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.4)] flex items-center gap-3 font-medium pointer-events-none">

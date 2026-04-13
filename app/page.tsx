@@ -1,6 +1,5 @@
 ﻿"use client";
 
-import Topbar from "@/components/Topbar";
 import MetricCard from "@/components/MetricCard";
 import LiveOrdersPanel from "@/components/LiveOrdersPanel";
 import AnalyticsSection from "@/components/AnalyticsSection";
@@ -110,8 +109,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <Topbar />
-      <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto pb-32">
+            <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto pb-32">
         <AnimatePresence>
           {showSuccess && (
             <motion.div key="success-toast" initial={{ opacity: 0, y: -20, x: "-50%" }} animate={{ opacity: 1, y: 20, x: "-50%" }} exit={{ opacity: 0, y: -20, x: "-50%" }} className="fixed top-0 left-1/2 z-50 bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-glow shadow-emerald-500/20 flex items-center gap-3 font-bold uppercase tracking-widest text-[9px] pointer-events-none">

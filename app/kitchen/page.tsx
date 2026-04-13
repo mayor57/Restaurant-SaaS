@@ -1,6 +1,5 @@
 "use client";
 
-import Topbar from "@/components/Topbar";
 import { motion, AnimatePresence } from "framer-motion";
 import { Clock, CheckSquare, ChefHat, BellRing, CheckCircle, X, RefreshCw } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -93,8 +92,7 @@ export default function KitchenPage() {
 
   return (
     <>
-      <Topbar />
-      <main className="flex-1 p-4 md:p-8 relative flex flex-col h-[calc(100vh-80px)] bg-[#050505] overflow-hidden">
+            <main className="flex-1 p-4 md:p-8 relative flex flex-col h-[calc(100vh-80px)] bg-[#050505] overflow-hidden">
         <AnimatePresence>
           {showSuccess && (
             <motion.div key="success-toast" initial={{ opacity: 0, y: -20, x: "-50%" }} animate={{ opacity: 1, y: 20, x: "-50%" }} exit={{ opacity: 0, y: -20, x: "-50%" }} className="fixed top-0 left-1/2 z-50 bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-glow shadow-emerald-500/20 flex items-center gap-3 font-bold uppercase tracking-widest text-[10px] pointer-events-none">

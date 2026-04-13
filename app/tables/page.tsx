@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { LayoutGrid, RefreshCw, AlertCircle, CheckCircle2, Plus, X, Monitor, Users, MapPin, CheckCircle, Clock, UtensilsCrossed, Calendar, Trash2 } from "lucide-react";
 import FloorMap from "@/components/FloorMap";
 import { getTables, addTable, deleteTable, updateTableStatus } from "@/lib/data";
-import Topbar from "@/components/Topbar";
 
 export default function TablesPage() {
   const [tables, setTables] = useState<any[]>([]);
@@ -105,8 +104,7 @@ export default function TablesPage() {
 
   return (
     <>
-      <Topbar />
-      <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto pb-32">
+            <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto pb-32">
         <AnimatePresence>
           {showSuccess && (
             <motion.div key="success-toast" initial={{ opacity: 0, y: -20, x: "-50%" }} animate={{ opacity: 1, y: 20, x: "-50%" }} exit={{ opacity: 0, y: -20, x: "-50%" }} className="fixed top-0 left-1/2 z-50 bg-emerald-500 text-white px-6 py-3 rounded-2xl shadow-[0_0_30px_rgba(16,185,129,0.4)] flex items-center gap-3 font-medium pointer-events-none">

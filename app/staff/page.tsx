@@ -21,7 +21,6 @@ import {
   Award,
   Circle
 } from "lucide-react";
-import Topbar from "@/components/Topbar";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   getStaff, 
@@ -149,8 +148,7 @@ export default function StaffPage() {
 
   return (
     <>
-      <Topbar />
-      <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto pb-32">
+            <main className="flex-1 overflow-y-auto p-4 md:p-8 space-y-8 max-w-[1600px] mx-auto pb-32">
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 mb-10">
         <div className="space-y-1">

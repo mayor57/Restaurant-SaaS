@@ -1,6 +1,5 @@
 ﻿"use client";
 
-import Topbar from "@/components/Topbar";
 import { motion, AnimatePresence } from "framer-motion";
 import { Settings as SettingsIcon, CreditCard, Bell, Shield, Store, Users, Save, CheckCircle2, XCircle, RefreshCw, CheckCircle, Smartphone, Globe, ShieldCheck } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -73,8 +72,7 @@ export default function SettingsPage() {
 
   return (
     <>
-      <Topbar />
-      <main className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10 pb-32 relative bg-[#050505]">
+            <main className="flex-1 overflow-y-auto custom-scrollbar p-6 lg:p-10 pb-32 relative bg-[#050505]">
         <AnimatePresence>
           {showSuccess && (
             <motion.div key="success-toast" initial={{ opacity: 0, y: -20, x: "-50%" }} animate={{ opacity: 1, y: 20, x: "-50%" }} exit={{ opacity: 0, y: -20, x: "-50%" }} className="fixed top-0 left-1/2 z-[1000] bg-emerald-500 text-white px-6 py-4 rounded-2xl shadow-[0_0_50px_rgba(16,185,129,0.5)] flex items-center gap-4 font-black uppercase tracking-widest text-[10px] pointer-events-none">
