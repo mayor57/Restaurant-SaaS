@@ -8,7 +8,7 @@ const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
   title: "KEM'Z DINER | Dashboard",
-  description: "Next-generation KEM'Z DINER management operating system.",
+  description: "Next-generation restaurant management operating system.",
 };
 
 export default function RootLayout({
@@ -18,10 +18,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={${inter.variable}  font-inter bg-[#050505] text-white min-h-screen antialiased selection:bg-amber-500/30 selection:text-amber-200}>
+      <body className={`${inter.variable} ${outfit.variable} font-inter bg-[#050505] text-white min-h-screen antialiased selection:bg-amber-500/30 selection:text-amber-200`}>
         <LayoutContent>{children}</LayoutContent>
       </body>
     </html>
   );
 }
-
