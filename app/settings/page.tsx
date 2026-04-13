@@ -159,7 +159,7 @@ export default function SettingsPage() {
                     {activeTab === "general" ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
                         <div className="space-y-3">
-                          <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1">Restaurant Name</label>
+                          <label className="text-[9px] font-black uppercase tracking-[0.3em] text-white/20 ml-1">KEM'Z DINER Name</label>
                           <input name="name" type="text" defaultValue={settings?.name} className="w-full bg-white/[0.03] border border-white/10 rounded-2xl px-5 py-4 text-white uppercase tracking-widest focus:outline-none focus:border-amber-500/50 focus:bg-white/[0.05] transition-all text-sm font-black shadow-inner" />
                         </div>
                         <div className="space-y-3">

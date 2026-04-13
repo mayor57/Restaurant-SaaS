@@ -1,4 +1,4 @@
-﻿import { createServerClient } from "@supabase/ssr"
+import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 
 export async function middleware(request: NextRequest) {
@@ -27,22 +27,27 @@ export async function middleware(request: NextRequest) {
     }
   )
 
+  // IMPORTANT: Do not trust cookies alone, verify with Supabase
   const {
     data: { user },
   } = await supabase.auth.getUser()
 
-  const isAuthPage = request.nextUrl.pathname.startsWith("/login") || request.nextUrl.pathname.startsWith("/signup")
+  const { pathname } = request.nextUrl
+  
+  // Define public routes
+  const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/signup")
+  const isPublicAsset = pathname.startsWith("/_next") || 
+                        pathname.startsWith("/favicon.ico") || 
+                        pathname.match(/\.(svg|png|jpg|jpeg|gif|webp)$/)
 
-  if (!user && !isAuthPage) {
-    const url = request.nextUrl.clone()
-    url.pathname = "/login"
-    return NextResponse.redirect(url)
+  // 1. Redirect unauthenticated users to login
+  if (!user && !isAuthPage && !isPublicAsset) {
+    return NextResponse.redirect(new URL("/login", request.url))
   }
 
+  // 2. Redirect authenticated users away from auth pages to home
   if (user && isAuthPage) {
-    const url = request.nextUrl.clone()
-    url.pathname = "/"
-    return NextResponse.redirect(url)
+    return NextResponse.redirect(new URL("/", request.url))
   }
 
   return supabaseResponse

@@ -1,4 +1,4 @@
-ï»¿"use client";
+"use client";
 
 import { useState } from "react";
 import { signIn } from "@/lib/auth-actions";
@@ -60,7 +60,7 @@ export default function LoginPage() {
                 <input 
                   name="email" 
                   type="email" 
-                  placeholder="name@restaurant.com" 
+                  placeholder="name@KEM'Z DINER.com" 
                   required 
                   className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:bg-white/[0.05] transition-all"
                 />
@@ -74,7 +74,7 @@ export default function LoginPage() {
                 <input 
                   name="password" 
                   type="password" 
-                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" 
+                  placeholder="••••••••" 
                   required 
                   className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-sm text-white focus:outline-none focus:border-amber-500/50 focus:bg-white/[0.05] transition-all"
                 />
@@ -108,4 +108,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
 

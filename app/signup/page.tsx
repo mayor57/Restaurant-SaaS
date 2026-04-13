@@ -45,7 +45,7 @@ export default function SignupPage() {
               <UtensilsCrossed size={28} className="text-white" />
             </div>
             <h1 className="text-3xl font-outfit font-bold tracking-tight text-white uppercase italic">UNIT <span className="text-amber-500">REGISTRATION</span></h1>
-            <p className="text-white/40 text-[10px] uppercase font-bold tracking-[0.4em] mt-2">Create your restaurant account</p>
+            <p className="text-white/40 text-[10px] uppercase font-bold tracking-[0.4em] mt-2">Create your KEM'Z DINER account</p>
           </div>
 
           {error && (
@@ -87,7 +87,7 @@ export default function SignupPage() {
                 <p className="text-[9px] uppercase font-black tracking-[0.2em] text-white/30 mb-2">Troubleshooting handshake</p>
                 <ul className="text-[11px] text-white/40 space-y-2 text-left list-disc list-inside px-1">
                   <li>Check the "Spam" or "Promotions" frequency.</li>
-                  <li>Verify if your restaurant domain is restricted.</li>
+                  <li>Verify if your KEM'Z DINER domain is restricted.</li>
                   <li>Wait 10 minutes if delivery was throttled.</li>
                 </ul>
               </div>
@@ -101,7 +101,7 @@ export default function SignupPage() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               <div className="space-y-2">
-                <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">Restaurant Name</label>
+                <label className="text-[10px] font-bold text-white/30 uppercase tracking-[0.2em] ml-1">KEM'Z DINER Name</label>
                 <div className="relative group">
                   <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-white/20 group-focus-within:text-amber-500 transition-colors" />
                   <input 
