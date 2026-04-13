@@ -59,7 +59,7 @@ export default function Topbar() {
   const displayName = user?.user_metadata?.restaurant_name || user?.email?.split("@")[0] || "Guest Session";
 
   return (
-    <header className="h-20 px-4 lg:px-8 flex items-center justify-between border-b border-white/5 bg-black/20 backdrop-blur-md z-[100] sticky top-0">
+    <header className="h-20 px-4 lg:px-8 flex items-center justify-between border-b border-white/5 bg-black/60 backdrop-blur-xl z-[100] sticky top-0">
       <AnimatePresence>
         {showSuccess && (
           <motion.div 
@@ -124,7 +124,7 @@ export default function Topbar() {
             >
               <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white/10 hover:border-amber-500/50 transition-colors shadow-2xl flex items-center justify-center bg-[#0A0A0A]">
                 {user ? (
-                   <img src={`https://ui-avatars.com/api/?name=${encodeURIComponent(getInitials(user))}&background=1A1A1A&color=f59e0b&bold=true`} alt="Profile" className="w-full h-full object-cover" />
+                   <img src={https://ui-avatars.com/api/?name=&background=1A1A1A&color=f59e0b&bold=true} alt="Profile" className="w-full h-full object-cover" />
                 ) : (
                    <div className="w-full h-full bg-white/5 animate-pulse" />
                 )}
@@ -139,31 +139,52 @@ export default function Topbar() {
                     initial={{ opacity: 0, y: 15, scale: 0.95 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
                     exit={{ opacity: 0, y: 15, scale: 0.95 }}
-                    className="absolute right-0 mt-4 w-64 glass-card bg-[#0A0A0A]/95 border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.5)] p-2 z-[120] backdrop-blur-2xl"
+                    className="absolute right-0 mt-4 w-72 bg-[#0A0A0A] border border-white/10 shadow-[0_30px_60px_rgba(0,0,0,0.8)] p-3 z-[120] backdrop-blur-3xl rounded-3xl overflow-hidden before:absolute before:inset-0 before:bg-gradient-to-b before:from-white/[0.03] before:to-transparent before:pointer-events-none"
                   >
-                    <div className="px-5 py-4 border-b border-white/5 mb-2">
-                       <p className="text-[9px] font-black text-amber-500 uppercase tracking-[0.2em] mb-1">Authenticated Session</p>
-                       <p className="text-sm font-black text-white truncate uppercase tracking-tight">{displayName}</p>
-                       <p className="text-[10px] text-white/30 truncate lowercase mt-0.5">{user?.email}</p>
+                    <div className="px-5 py-5 border-b border-white/5 mb-3 bg-white/[0.02] rounded-2xl">
+                       <p className="text-[9px] font-black text-amber-500 uppercase tracking-[0.3em] mb-2 opacity-80">Authenticated Session</p>
+                       <div className="flex items-center gap-3">
+                         <div className="w-10 h-10 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-500 text-xs font-black shadow-inner">
+                           {getInitials(user)}
+                         </div>
+                         <div className="flex-1 min-w-0">
+                           <p className="text-sm font-black text-white truncate uppercase tracking-tight leading-none mb-1.5">{displayName}</p>
+                           <p className="text-[10px] text-white/30 truncate lowercase font-medium tracking-tight italic">{user?.email}</p>
+                         </div>
+                       </div>
                     </div>
                     
-                    <Link href="/settings" onClick={() => setIsProfileOpen(false)}>
-                      <button className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-all group">
-                        <User size={14} className="text-white/20 group-hover:text-amber-500" /> Account Settings
+                    <div className="space-y-1">
+                      <Link href="/settings" onClick={() => setIsProfileOpen(false)}>
+                        <button className="w-full flex items-center justify-between px-4 py-3.5 text-[10px] font-bold uppercase tracking-widest text-white/50 hover:text-white hover:bg-white/[0.05] rounded-xl transition-all group">
+                          <div className="flex items-center gap-3">
+                            <User size={14} className="text-white/20 group-hover:text-amber-500 transition-colors" /> 
+                            <span>Account Settings</span>
+                          </div>
+                          <div className="w-1 h-1 rounded-full bg-white/10 group-hover:bg-amber-500 transition-colors" />
+                        </button>
+                      </Link>
+                      
+                      <button 
+                        onClick={() => { setIsProfileOpen(false); triggerSuccess("Core Systems Re-Calibrated"); }} 
+                        className="w-full flex items-center justify-between px-4 py-3.5 text-[10px] font-bold uppercase tracking-widest text-white/50 hover:text-white hover:bg-white/[0.05] rounded-xl transition-all group"
+                      >
+                         <div className="flex items-center gap-3">
+                           <Settings size={14} className="text-white/20 group-hover:text-amber-400 transition-colors" /> 
+                           <span>System Parameters</span>
+                         </div>
+                         <div className="w-1 h-1 rounded-full bg-white/10 group-hover:bg-amber-400 transition-colors" />
                       </button>
-                    </Link>
+                    </div>
                     
-                    <button onClick={() => { setIsProfileOpen(false); triggerSuccess("Platform Protocols Updated"); }} className="w-full flex items-center gap-3 px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-white/60 hover:text-white hover:bg-white/5 rounded-xl transition-all group">
-                       <Settings size={14} className="text-white/20 group-hover:text-amber-400" /> System Params
-                    </button>
-                    
-                    <div className="h-px bg-white/5 my-2" />
+                    <div className="h-px bg-gradient-to-r from-transparent via-white/5 to-transparent my-4" />
                     
                     <button 
                       onClick={() => signOut()} 
-                      className="w-full flex items-center gap-3 px-4 py-3 text-[10px] text-red-400/70 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all group font-black uppercase tracking-[0.2em]"
+                      className="w-full flex items-center gap-3 px-4 py-4 text-[10px] text-red-400/60 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all group font-black uppercase tracking-[0.3em]"
                     >
-                       <LogOut size={14} /> Terminate Session
+                       <LogOut size={14} className="group-hover:-translate-x-1 transition-transform" /> 
+                       <span>Terminate Session</span>
                     </button>
                   </motion.div>
                 </>
